@@ -3,7 +3,8 @@ class AppStrings {
   static const String login = "Giriş Yap";
   static const String signUp = "Kayıt Ol";
   static const String error = "Bilinmeyen bir hata oluştu.";
-  static const String enter_username = "Kullanıcı adı.";
+  static const String login_title = "Giriş yap";
+  static const String enter_email = "Email.";
   static const String enter_password = "Parola.";
   static const String login_button = "Giriş yap.";
   static const String register_button = "Kayıt ol.";

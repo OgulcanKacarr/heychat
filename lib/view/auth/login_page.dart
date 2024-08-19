@@ -6,6 +6,7 @@ import 'package:heychat/constants/AppStrings.dart';
 import 'package:heychat/widgets/custom_card_widget.dart';
 import 'package:heychat/widgets/custom_elevated_button_widget.dart';
 import 'package:heychat/widgets/custom_textfield_widget.dart';
+import 'package:heychat/widgets/text_style_custom_widget.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -15,9 +16,8 @@ class LoginPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPageState extends ConsumerState<LoginPage> {
-  final TextEditingController _username_controller = TextEditingController();
+  final TextEditingController _email_controller = TextEditingController();
   final TextEditingController _password_controller = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,8 +42,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       padding: const EdgeInsets.all(AppSizes.paddingSmall),
                       child: Column(
                         children: [
+                           const Text(AppStrings.login_title,style: TextStyle(
+                             color: Colors.green,
+                             fontSize: AppSizes.paddingMedium,
+                             fontWeight: FontWeight.bold
+                           ),),
                           loginForm(),
-
                         ],
                       ),
                     ),
@@ -57,17 +61,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     );
   }
 
+
   Widget loginForm(){
     return Column(
       children: [
         const SizedBox(height: AppSizes.paddingLarge,),
 
-        //Kullanıcı adını al
+        //email adresini al
         CustomTextfieldWidget(
-          hint: AppStrings.enter_username,
-          controller: _username_controller,
-          prefixIcon: const Icon(Icons.person),
-          keyboardType: TextInputType.text,
+          hint: AppStrings.enter_email,
+          controller: _email_controller,
+          prefixIcon: const Icon(Icons.email),
+          keyboardType: TextInputType.emailAddress,
           isPassword: false,),
         const SizedBox(height: AppSizes.height,),
 
@@ -86,6 +91,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             text: AppStrings.login_button, onPressed: () {
 
         }),
+
         const SizedBox(height: AppSizes.height,),
         //ya da
         const Align(alignment:Alignment.center, child: Text(AppStrings.or)),
@@ -104,7 +110,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         }, child: const Text(AppStrings.register_button)),
         const SizedBox(height: AppSizes.height,),
 
-        //şifreyi sıfırla
+        //şifre sıfırlama butonu
         TextButton(onPressed: (){
 
         }, child: const Text(AppStrings.did_you_forget_your_password)),
