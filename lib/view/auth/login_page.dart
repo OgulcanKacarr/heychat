@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heychat/constants/AppSizes.dart';
 import 'package:heychat/constants/AppStrings.dart';
+import 'package:heychat/view_model/auth/login_page_viewmodel.dart';
 import 'package:heychat/widgets/custom_card_widget.dart';
 import 'package:heychat/widgets/custom_elevated_button_widget.dart';
 import 'package:heychat/widgets/custom_textfield_widget.dart';
-import 'package:heychat/widgets/text_style_custom_widget.dart';
 
+final view_model = ChangeNotifierProvider((ref) => LoginPageViewmodel());
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
@@ -20,12 +21,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final TextEditingController _password_controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    var read = ref.read(view_model);
+    var watch = ref.watch(view_model);
     return Scaffold(
-      body: _buildBody(),
+      body: _buildBody(read,watch),
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(var read, var watch) {
     return SingleChildScrollView(
       child: Container(
         height: AppSizes.screenHeight(context),
@@ -42,9 +45,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       padding: const EdgeInsets.all(AppSizes.paddingSmall),
                       child: Column(
                         children: [
-                           const Text(AppStrings.login_title,style: TextStyle(
+                          //Başlık
+                          const Text(AppStrings.login_title,style: TextStyle(
                              color: Colors.green,
-                             fontSize: AppSizes.paddingMedium,
+                             fontSize: AppSizes.paddingLarge,
                              fontWeight: FontWeight.bold
                            ),),
                           loginForm(),
@@ -102,11 +106,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         const SizedBox(height: AppSizes.height,),
 
 
-
-
         //kayıt ol butonu
         TextButton(onPressed: (){
-
+            ref.read(view_model).goRegisterPage(context);
         }, child: const Text(AppStrings.register_button)),
         const SizedBox(height: AppSizes.height,),
 
