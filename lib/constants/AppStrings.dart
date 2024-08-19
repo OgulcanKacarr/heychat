@@ -10,7 +10,11 @@ class AppStrings {
   static const String register_button = "Kayıt ol.";
   static const String or = "Ya da.";
   static const String did_you_forget_your_password = "Şifreni mi unuttun?";
-
+  static const String name = "İsim";
+  static const String surname = "Soyisim";
+  static const String username = "Kullanıcı adı";
+  static const String repassword = "Parola doğrula";
+  static const String next_page = "İleri";
 
 
   //Paths
