@@ -23,6 +23,7 @@ class _CreatePageState extends ConsumerState<CreatePage> {
   final TextEditingController _surname_controller = TextEditingController();
   final TextEditingController _username_controller = TextEditingController();
   final PageController pageController = PageController();
+  int page_view_current_index = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +33,9 @@ class _CreatePageState extends ConsumerState<CreatePage> {
     return Scaffold(
       body: Stack(
         children: [
+          //geri oku
           Positioned(
-              top: 10,
+              top: 20,
               left: 5,
               child:
               IconButton(onPressed: (){
@@ -50,14 +52,15 @@ class _CreatePageState extends ConsumerState<CreatePage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          //Pageview
           SizedBox(
             width: AppSizes.screenWidth(context) - 20,
             height: AppSizes.screenWidth(context) / 2,
             child: PageView(
               controller: pageController,
               onPageChanged: (index) {
-                setState(() {});
+                setState(() {
+                  page_view_current_index = index;
+                });
               },
               children: [
                 _buildNameSurnamePage(),
@@ -69,78 +72,59 @@ class _CreatePageState extends ConsumerState<CreatePage> {
           const SizedBox(height: 3),
           _buildPageIndicators(),
           const SizedBox(height: 15),
-
-          //Kayıt ol butonu
           CustomElevatedButtonWidget(
-            text: pageController.page?.toInt() == 2
+            text: pageController.hasClients && (page_view_current_index == 2)
                 ? AppStrings.register_button
                 : AppStrings.next_page,
             onPressed: () {
-              int nextPage = pageController.page!.toInt() + 1;
-              if (nextPage < 3) {
-                pageController.animateToPage(
-                  nextPage,
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeInOut,
-                );
-              } else {
-                // Kayıt olma işlemini burada yapabilirsiniz
+              if (pageController.hasClients) {
+                int nextPage = pageController.page!.toInt() + 1;
+                if (nextPage < 3) {
+                  pageController.animateToPage(
+                    nextPage,
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeInOut,
+                  );
+                } else {
+                  // Kayıt olma işlemini burada yapabilirsiniz
+                }
               }
             },
           ),
           const SizedBox(height: 20),
           const Text(AppStrings.or),
           const SizedBox(height: 5),
-          Container(width: AppSizes.screenWidth(context),height: 5,color: Colors.black,),
+          Container(width: AppSizes.screenWidth(context), height: 5, color: Colors.black,),
           const SizedBox(height: 2),
-          //login butonu
-          TextButton(onPressed: (){
-            read.goLoginPage(context);
-          }, child: const Text(AppStrings.login_button)),
+          TextButton(
+            onPressed: () {
+              read.goLoginPage(context);
+            },
+            child: const Text(AppStrings.login_button),
+          ),
         ],
       ),
     );
   }
 
   Widget _buildPageIndicators() {
-    // Check if PageController has clients
-    if (pageController.hasClients) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: List.generate(
-          3,
-              (index) => Container(
-            margin: const EdgeInsets.symmetric(horizontal: 5),
-            width: 12,
-            height: 12,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: pageController.page?.toInt() == index
-                  ? Colors.blue
-                  : Colors.grey,
-            ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(
+        3,
+            (index) => Container(
+          margin: const EdgeInsets.symmetric(horizontal: 5),
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: page_view_current_index == index ? Colors.blue : Colors.grey,
           ),
         ),
-      );
-    } else {
-      // Return a default indicator if PageController is not ready
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: List.generate(
-          3,
-              (index) => Container(
-            margin: const EdgeInsets.symmetric(horizontal: 5),
-            width: 12,
-            height: 12,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.grey,
-            ),
-          ),
-        ),
-      );
-    }
+      ),
+    );
   }
+
 
 
   Widget _buildNameSurnamePage() {
