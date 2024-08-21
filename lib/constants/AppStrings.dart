@@ -24,7 +24,7 @@ class AppStrings {
   static const String add = "Ekle";
   static const String requests = "İstekler";
   static const String settings = "Ayarlar";
-  static const String exit = "Çıkış";
+  static const String exit = "Çıkış yap";
 
 
 
