@@ -10,6 +10,7 @@ import 'package:heychat/view/nav/home_page.dart';
 import 'package:heychat/view/nav/profile_page.dart';
 import 'package:heychat/view/reset_password_page.dart';
 import 'package:heychat/view/search_page.dart';
+import 'package:heychat/view/settings/settings_feed_page.dart';
 import 'package:heychat/view/settings/settings_page.dart';
 import 'package:heychat/view/splas_page.dart';
 import 'constants/AppThemes.dart';
@@ -50,6 +51,7 @@ class Main extends StatelessWidget {
         "/flow_page": (context) => const FlowPage(),
         "/profile_page": (context) => const ProfilePage(),
         "/settings_page": (context) => const SettingsPage(),
+        "/settings_feed_page": (context) =>   SettingsFeedPage(),
       },
     );
   }

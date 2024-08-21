@@ -25,8 +25,18 @@ class AppStrings {
   static const String requests = "İstekler";
   static const String settings = "Ayarlar";
   static const String exit = "Çıkış yap";
-
-
+  static const String personal_settings = "Kişisel ayarlar";
+  static const String app_settings = "Uygulama ayarları";
+  static const String notification_settings = "Bildirim ayarları";
+  static const String selected_color = "Aktif renk";
+  static const String unselected_color = "Pasif renk";
+  static const choose_color = "Bir renk seç";
+  static const String select = "Seç";
+  static const String save = "Kaydet";
+  static const String apply_settings = "Seçimler uygulandı";
+  static const String apply = "Uygula";
+  static const String app_alt_bar_color_settings = "Altbar rengi";
+  static const String app_app_bar_color_settings = "Üstbar rengi";
 
   //Paths
 static const String logo = "assets/images/logo.png";

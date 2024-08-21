@@ -5,6 +5,7 @@ import 'package:heychat/constants/AppColors.dart';
 import 'package:heychat/constants/AppSizes.dart';
 import 'package:heychat/constants/AppStrings.dart';
 import 'package:heychat/view_model/settings_page_viewmodel.dart';
+import 'package:heychat/widgets/custom_app_bar_widget.dart';
 
 final view_model = ChangeNotifierProvider((ref) => SettingsPageViewmodel());
 
@@ -19,8 +20,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   //ayarlar sayfasındaki butonlar
   List<String> settings_buttons = [
-    "Kişisel ayarlar",
-    "Bildirimler",
+    AppStrings.personal_settings,
+    AppStrings.app_settings,
+    AppStrings.notification_settings,
   ];
 
   @override
@@ -28,7 +30,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     var watch = ref.watch(view_model);
     var read = ref.read(view_model);
     return Scaffold(
-      appBar: _buildAppbar(),
+      appBar: CustomAppBarWidget(title: AppStrings.settings,isBack: false, centerTitle: true,onPressed:(){
+        Navigator.pushReplacementNamed(context, "/home_page");
+      }),
       body: _buildBody(),
       bottomNavigationBar: TextButton(
         onPressed: () async {
@@ -68,33 +72,15 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       title: Text(settings_buttons[index]),
       trailing: const Icon(Icons.arrow_right),
       onTap: () {
-        // Burada butona tıklama işlemini tanımlayın
+        // settings_feed page'e git
+        if(settings_buttons[index] == AppStrings.app_settings){
+          Navigator.pushReplacementNamed(context, "/settings_feed_page", arguments: settings_buttons[index]);
+        }
+
       },
     );
 
   }
 
-  //appbar
-  AppBar _buildAppbar(){
-    return AppBar(
-      backgroundColor: AppColors.app_bar_background,
-      title: const Text(
-        AppStrings.settings,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: AppSizes.paddingLarge,
-        ),
-      ),
-      centerTitle: true,
-      leading: IconButton(
-        icon: const Icon(
-          Icons.arrow_back,
-          color: Colors.white,
-        ),
-        onPressed: () {
-          Navigator.pushReplacementNamed(context, "/home_page");
-        },
-      ),
-    );
-  }
+
 }

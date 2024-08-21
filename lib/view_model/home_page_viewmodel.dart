@@ -35,7 +35,7 @@ class HomePageViewmodel extends ChangeNotifier {
       BottomNavigationBarItem(
         icon: Stack(
           children: [
-            Icon(Icons.chat),
+            const Icon(Icons.chat),
             if (_chats_notificationCount > 0)
               Positioned(
                 right: 0,
