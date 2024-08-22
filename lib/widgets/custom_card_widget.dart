@@ -8,14 +8,14 @@ class CustomCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     return Card(
-      elevation: 15.0,
+      elevation: 25.0,
       margin: const EdgeInsets.all(10.5),
       clipBehavior: Clip.antiAlias,
       color: theme.cardColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(25.0),
-        side: BorderSide(
-          color: theme.colorScheme.secondary,
+        side: const BorderSide(
+          color: Colors.greenAccent,
           width: 2.0
         )
       ),

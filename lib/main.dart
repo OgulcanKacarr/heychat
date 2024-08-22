@@ -4,7 +4,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heychat/services/firebase_auth_service.dart';
 import 'package:heychat/view/auth/create_page.dart';
 import 'package:heychat/view/auth/login_page.dart';
-import 'package:heychat/view/home_page.dart';
+import 'package:heychat/view/chats/chats_page.dart';
+import 'package:heychat/view/nav/flow_page.dart';
+import 'package:heychat/view/nav/home_page.dart';
+import 'package:heychat/view/nav/profile_page.dart';
+import 'package:heychat/view/reset_password_page.dart';
+import 'package:heychat/view/search_page.dart';
+import 'package:heychat/view/settings/settings_app_color_page.dart';
+import 'package:heychat/view/settings/settings_page.dart';
+import 'package:heychat/view/settings/settings_personel_page.dart';
 import 'package:heychat/view/splas_page.dart';
 import 'constants/AppThemes.dart';
 import 'firebase_options.dart';
@@ -38,6 +46,14 @@ class Main extends StatelessWidget {
         "/splash_page": (context) => const SplashPage(),
         "/create_page": (context) => const CreatePage(),
         "/login_page": (context) => const LoginPage(),
+        "/reset_password_page": (context) => const ResetPasswordPage(),
+        "/chats_page": (context) =>  const ChatsPage(),
+        "/search_page": (context) => const SearchPage(),
+        "/flow_page": (context) => const FlowPage(),
+        "/profile_page": (context) => const ProfilePage(),
+        "/settings_page": (context) => const SettingsPage(),
+        "/settings_feed_page": (context) =>   SettingsAppColorPage(),
+        "/settings_personel_page": (context) =>   const SettingsPersonelPage(),
       },
     );
   }

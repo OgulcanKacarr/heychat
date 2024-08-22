@@ -6,6 +6,7 @@ import 'package:heychat/constants/AppStrings.dart';
 import 'package:heychat/view_model/auth/login_page_viewmodel.dart';
 import 'package:heychat/widgets/custom_card_widget.dart';
 import 'package:heychat/widgets/custom_elevated_button_widget.dart';
+import 'package:heychat/widgets/custom_indicator_widget.dart';
 import 'package:heychat/widgets/custom_textfield_widget.dart';
 
 final view_model = ChangeNotifierProvider((ref) => LoginPageViewmodel());
@@ -47,7 +48,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         children: [
                           //Başlık
                           const Text(AppStrings.login_title,style: TextStyle(
-                             color: Colors.green,
+                             color: Colors.pinkAccent,
                              fontSize: AppSizes.paddingLarge,
                              fontWeight: FontWeight.bold
                            ),),
@@ -93,16 +94,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         //giriş yap butonu,
         CustomElevatedButtonWidget(
             text: AppStrings.login_button, onPressed: () {
-
+            Navigator.pushReplacementNamed(context, "/home_page");
         }),
 
         const SizedBox(height: AppSizes.height,),
         //ya da
         const Align(alignment:Alignment.center, child: Text(AppStrings.or)),
         const SizedBox(height: AppSizes.height,),
-        Container(width: AppSizes.screenHeight(context),
-          height: 2,
-          color: Colors.black,),
+        const CustomIndicatorWidget(),
         const SizedBox(height: AppSizes.height,),
 
 
@@ -114,7 +113,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
         //şifre sıfırlama butonu
         TextButton(onPressed: (){
-
+          ref.read(view_model).goResetPasswordPage(context);
         }, child: const Text(AppStrings.did_you_forget_your_password)),
 
       ],
