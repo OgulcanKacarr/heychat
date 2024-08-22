@@ -12,15 +12,15 @@ import 'package:heychat/widgets/custom_indicator_widget.dart';
 import 'package:heychat/widgets/custom_navigationbar_widget.dart';
 
 final view_model = ChangeNotifierProvider((ref)=> SettingsFeedPageViewmodel());
-class SettingsFeedPage extends ConsumerStatefulWidget {
+class SettingsAppColorPage extends ConsumerStatefulWidget {
 
-   SettingsFeedPage({super.key,});
+  SettingsAppColorPage({super.key,});
 
   @override
-  ConsumerState<SettingsFeedPage> createState() => _SettingsFeedPageState();
+  ConsumerState<SettingsAppColorPage> createState() => _SettingsFeedPageState();
 }
 
-class _SettingsFeedPageState extends ConsumerState<SettingsFeedPage> {
+class _SettingsFeedPageState extends ConsumerState<SettingsAppColorPage> {
   late String title;
 
   //nav colors

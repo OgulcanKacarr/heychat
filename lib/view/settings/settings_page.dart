@@ -76,6 +76,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         if(settings_buttons[index] == AppStrings.app_settings){
           Navigator.pushReplacementNamed(context, "/settings_feed_page", arguments: settings_buttons[index]);
         }
+        if(settings_buttons[index] == AppStrings.personal_settings){
+          Navigator.pushReplacementNamed(context, "/settings_personel_page", arguments: settings_buttons[index]);
+        }
 
       },
     );

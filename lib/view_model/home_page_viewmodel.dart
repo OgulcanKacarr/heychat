@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:heychat/constants/AppStrings.dart';
-import 'package:heychat/view/nav/chats_page.dart';
+import 'package:heychat/view/chats/chats_page.dart';
 import 'package:heychat/view/nav/flow_page.dart';
 import 'package:heychat/view/nav/profile_page.dart';
 import 'package:heychat/view/search_page.dart';
