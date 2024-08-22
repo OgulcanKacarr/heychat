@@ -37,6 +37,12 @@ class AppStrings {
   static const String apply = "Uygula";
   static const String app_alt_bar_color_settings = "Altbar rengi";
   static const String app_app_bar_color_settings = "Üstbar rengi";
+  static const String follow = "Takip et";
+  static const String delete = "Sil";
+  static const String change_profile_photo = "Profil fotoğrafı";
+  static const String change_cover_photo = "Kapak fotoğrafı";
+  static const String change = "Değiştir";
+  static const String change_password = "Şifre değiştir";
 
   //Paths
 static const String logo = "assets/images/logo.png";
