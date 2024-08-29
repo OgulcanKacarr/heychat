@@ -35,44 +35,46 @@ class _CreatePageState extends ConsumerState<CreatePage> {
 
     return Scaffold(
       body: SafeArea(
-        child: Stack(
-        
-          children: [
-            //geri oku
-            IconButton(
-              onPressed: () {
-                Navigator.pushReplacementNamed(context, "/login_page");
-              },
-              icon: const Icon(Icons.arrow_back),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-
-                Text(
-                  register_title,
-                  style: const TextStyle(
-                      fontSize: AppSizes.paddingLarge,
-                      color: Colors.pinkAccent,
-                      fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(
-                  height: AppSizes.height,
-                ),
-
-                CustomCard(
-                  child: Padding(
-                    padding: const EdgeInsets.all(AppSizes.paddingSmall),
-                    child: SizedBox(
-                      width: AppSizes.screenWidth(context),
-                      child: _loginForm(read, watch),
-                    ),
+        child: SingleChildScrollView(
+          child: Stack(
+          
+            children: [
+              //geri oku
+              IconButton(
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, "/login_page");
+                },
+                icon: const Icon(Icons.arrow_back),
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+          
+                  Text(
+                    register_title,
+                    style: const TextStyle(
+                        fontSize: AppSizes.paddingLarge,
+                        color: Colors.pinkAccent,
+                        fontWeight: FontWeight.bold),
                   ),
-                )
-              ],
-        
-            )
-          ],
+                  const SizedBox(
+                    height: AppSizes.height,
+                  ),
+          
+                  CustomCard(
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppSizes.paddingSmall),
+                      child: SizedBox(
+                        width: AppSizes.screenWidth(context),
+                        child: _loginForm(read, watch),
+                      ),
+                    ),
+                  )
+                ],
+          
+              )
+            ],
+          ),
         ),
       ),
 
@@ -145,7 +147,18 @@ class _CreatePageState extends ConsumerState<CreatePage> {
                     curve: Curves.easeInOut,
                   );
                 } else {
-                  // Kayıt olma işlemini burada yapabilirsiniz
+                  // Kayıt olma işlemi
+
+                  read.createUser(
+                    context,
+                    _name_controller.text.trim().replaceAll(' ', ''),
+                    _surname_controller.text.trim().replaceAll(' ', ''),
+                    _username_controller.text.trim().replaceAll(' ', ''),
+                    _email_controller.text.trim().replaceAll(' ', ''),
+                    _password_controller.text.trim().replaceAll(' ', ''),
+                    _repassword_controller.text.trim().replaceAll(' ', ''),
+                  );
+
                 }
               }
             },
@@ -226,6 +239,7 @@ class _CreatePageState extends ConsumerState<CreatePage> {
             prefixIcon: const Icon(Icons.person),
             keyboardType: TextInputType.text,
             isPassword: false,
+            useSpace: true,
           ),
           const SizedBox(
             height: AppSizes.height,

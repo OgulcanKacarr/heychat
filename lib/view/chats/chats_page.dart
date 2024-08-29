@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heychat/constants/AppSizes.dart';
+import 'package:heychat/widgets/custom_floatingactionbutton_widget.dart';
 
 class ChatsPage extends ConsumerStatefulWidget {
   const ChatsPage({super.key});
@@ -16,6 +17,9 @@ class _ChatsPageState extends ConsumerState<ChatsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildBody(),
+      floatingActionButton: CustomFloatingactionbuttonWidget(
+
+      ),
     );
   }
 

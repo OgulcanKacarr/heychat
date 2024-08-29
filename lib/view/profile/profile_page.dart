@@ -1,46 +1,115 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heychat/constants/AppSizes.dart';
 import 'package:heychat/constants/AppStrings.dart';
+import 'package:heychat/constants/ConstMethods.dart';
+import 'package:heychat/model/Users.dart';
+import 'package:heychat/view_model/profile_page_viewmodel.dart';
 import 'package:heychat/widgets/custom_elevated_button_widget.dart';
 import 'package:heychat/widgets/custom_indicator_widget.dart';
 
-class ProfilePage extends StatefulWidget {
+final viewModelProvider = ChangeNotifierProvider<ProfilePageViewmodel>(
+    (ref) => ProfilePageViewmodel());
+
+class ProfilePage extends ConsumerStatefulWidget {
   const ProfilePage({super.key});
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  ConsumerState<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _ProfilePageState extends ConsumerState<ProfilePage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final ConstMethods _constMethods = ConstMethods();
+  //kullanıcı bilgilerini getir
+  late Future<Users?> _getUsers;
+
+  //datalar çekildiyse tekrar çekme
+  bool _isDataLoaded = false;
+
+
+  //Kullanıcı bilgilerini gösterecek değişkenler
+  String _display_name = "";
+  String _profile_photo = "";
+  String _cover_photo = "";
+  bool _isOnline = false;
+  String _username = "";
+  //bio yok ise gösterme
+  bool _isShowBio = false;
+  String _bio = "";
+  List<String> _followers = [];
+
+
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isDataLoaded) {
+      _getUsers = _getUserInfo();
+      _isDataLoaded = true;
+    }
+  }
+
+  //Kullanıcıları veritabanından çek
+  Future<Users?> _getUserInfo() async {
+    Users? user = await _constMethods.getUserInfo(context, _auth.currentUser!.uid);
+    return user;
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _buildBody(),
+    var watch = ref.watch(viewModelProvider);
+    var read = ref.read(viewModelProvider);
+    return FutureBuilder(
+      future: _getUsers,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Hata: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data == null) {
+          return const Center(child: Text(AppStrings.user_not_found));
+        } else {
+          //kullanıcı bilgileri değişkenlere işle
+          Users user = snapshot.data!;
+          _username = user.username;
+          _display_name = user.displayName;
+          _followers = user.followers!;
+          _profile_photo = user.profileImageUrl;
+          _cover_photo = user.coverImageUrl;
+          _isOnline = user.isOnline;
+          _bio = user.bio;
+          if(_bio.isNotEmpty){
+            _isShowBio = true;
+          }
+
+          return _buildBody(watch,read);
+        }
+      },
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(ProfilePageViewmodel watch, ProfilePageViewmodel read) {
     return SingleChildScrollView(
       child: Stack(
         clipBehavior: Clip.none,
         children: [
           Column(
             children: [
+
               // Kapak Fotoğrafı Tasarımı
-              CachedNetworkImage(
-                imageUrl:
-                    "https://avatars.githubusercontent.com/u/63792003?v=4",
+              SizedBox(
                 width: AppSizes.screenWidth(context),
                 height: AppSizes.screenHeight(context) / 2.5,
-                fit: BoxFit.cover,
-                progressIndicatorBuilder: (context, url, downloadProgress) =>
-                    Center(
-                  child: CircularProgressIndicator(
-                      value: downloadProgress.progress),
-                ),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
+                child: _cover_photo.isEmpty
+                    ? const Center(
+                        child: Text(AppStrings.cover_photo_not_found))
+                    : _constMethods.showCachedImage(_cover_photo),
               ),
+
               // Profil Bilgileri ve Postlar
               Container(
                 width: AppSizes.screenWidth(context),
@@ -54,13 +123,15 @@ class _ProfilePageState extends State<ProfilePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+
                         //Online Durumu
-                        const Padding(
+                         Padding(
                           padding: EdgeInsets.only(left: 10),
                           child: SizedBox(
                             width: 20,
                             child: CircleAvatar(
-                              backgroundColor: Colors.green,
+                              backgroundColor:
+                              _isOnline ? Colors.green : Colors.grey,
                             ),
                           ),
                         ),
@@ -77,50 +148,43 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
 
                     // Ad - soyad
-                    const Center(
+                     Center(
                       child: Text(
-                        "Ogulcan KACAR",
-                        style: TextStyle(fontSize: AppSizes.paddingLarge),
+                        _display_name.isNotEmpty ? _display_name :  AppStrings.user_not_found,
+
+                        style: const TextStyle(fontSize: AppSizes.paddingLarge),
                       ),
                     ),
                     // kullanıcı adı
-                    const Center(
+                     Center(
                       child: Text(
-                        "ogulcankacar",
-                        style: TextStyle(fontSize: AppSizes.paddingMedium),
+                        _username.isNotEmpty ? _username :  AppStrings.user_not_found,
+                        style: const TextStyle(fontSize: AppSizes.paddingMedium),
                       ),
                     ),
+                    const SizedBox(height: 15),
+
+                    // bio
+                    if (_isShowBio)
+                      Center(
+                        child: Text(
+                          _bio,
+                          style: const TextStyle(fontSize: AppSizes.paddingMedium),
+                        ),
+                      ),
+
                     const SizedBox(height: 5),
 
                     // Takipçiler
-                    const Center(
+                     Center(
                       child: Text(
-                        "0 Takipçi",
-                        style: TextStyle(fontSize: AppSizes.paddingMedium),
+                        "${_followers.length} ${AppStrings.followers}",
+                        style: const TextStyle(fontSize: AppSizes.paddingMedium),
                       ),
                     ),
-                    const SizedBox(height: 5),
+                    const SizedBox(height: 10),
                     const CustomIndicatorWidget(),
-
-                    //duruma göre etkileşim butonları
-                    Visibility(
-                      visible: true,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          //takip et butonu
-                          CustomElevatedButtonWidget(
-                              text: AppStrings.follow, onPressed: () {}),
-                          const SizedBox(
-                            width: 5,
-                          ),
-
-                          //takip silme butonu
-                          CustomElevatedButtonWidget(
-                              text: AppStrings.delete, onPressed: () {}),
-                        ],
-                      ),
-                    ),
+                    const SizedBox(height: 10),
                     // Posts
                     _buildPost(),
                   ],
@@ -132,10 +196,18 @@ class _ProfilePageState extends State<ProfilePage> {
           Positioned(
             top: AppSizes.screenHeight(context) / 2.5 - 50,
             left: (AppSizes.screenWidth(context) / 2) - 50,
-            child: const CircleAvatar(
-              radius: 50, // Profil fotoğrafının boyutu
-              backgroundImage: NetworkImage(
-                  "https://github.com/OgulcanKacarr/OgulcanKacarr/raw/main/tr.png"),
+            child: CircleAvatar(
+              radius: 50,
+              backgroundColor: Colors.grey[200], // Opsiyonel: Arka plan rengi
+              child: _profile_photo.isEmpty
+                  ? const Icon(Icons.person, size: 50) // Profil fotoğrafı yoksa ikon göster
+                  : ClipOval(
+                child: _constMethods.showCachedImage(
+                  _profile_photo,
+                  width: 100,
+                  height: 100,
+                ),
+              ),
             ),
           ),
         ],
@@ -174,7 +246,6 @@ class _ProfilePageState extends State<ProfilePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-
                   //beğenme butonu
                   IconButton(
                     onPressed: () {
@@ -199,5 +270,6 @@ class _ProfilePageState extends State<ProfilePage> {
       padding: const EdgeInsets.all(5.0),
     );
   }
+
 
 }

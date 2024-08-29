@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:heychat/view/auth/login_page.dart';
-import '../constants/AppStrings.dart';
+import '../../constants/AppStrings.dart';
 
 
 class SplashPage extends StatelessWidget {

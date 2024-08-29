@@ -4,6 +4,7 @@ import 'package:heychat/constants/AppColors.dart';
 import 'package:heychat/constants/AppSizes.dart';
 import 'package:heychat/constants/AppStrings.dart';
 import 'package:heychat/services/shared_pref_service.dart';
+import 'package:heychat/view_model/home_page_viewmodel.dart';
 
 class CustomAppBarWidget extends ConsumerStatefulWidget
     implements PreferredSizeWidget {
@@ -13,6 +14,7 @@ class CustomAppBarWidget extends ConsumerStatefulWidget
   final bool isBack;
   final bool actions;
   final VoidCallback? onPressed;
+
 
   CustomAppBarWidget({
     super.key,
@@ -31,6 +33,7 @@ class CustomAppBarWidget extends ConsumerStatefulWidget
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
 
+final view_model = ChangeNotifierProvider((ref)=> HomePageViewmodel());
 class _CustomAppBarWidgetState extends ConsumerState<CustomAppBarWidget> {
   late Future<Color?> _colorFuture;
 
@@ -85,6 +88,7 @@ class _CustomAppBarWidgetState extends ConsumerState<CustomAppBarWidget> {
                 switch (result) {
                   case "post":
                   // Handle post action
+                  ref.watch(view_model).updateNotificationCount(3);
                     break;
                   case "settings":
                     Navigator.pushReplacementNamed(context, "/settings_page");

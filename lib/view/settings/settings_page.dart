@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heychat/constants/AppColors.dart';
 import 'package:heychat/constants/AppSizes.dart';
 import 'package:heychat/constants/AppStrings.dart';
-import 'package:heychat/view_model/settings_page_viewmodel.dart';
+import 'package:heychat/view_model/settings/settings_page_viewmodel.dart';
 import 'package:heychat/widgets/custom_app_bar_widget.dart';
 
 final view_model = ChangeNotifierProvider((ref) => SettingsPageViewmodel());

@@ -88,13 +88,17 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           prefixIcon: const Icon(Icons.lock),
           suffixIcon: const Icon(Icons.remove_red_eye),
           isPassword: true,
+          useSpace: true,
           keyboardType: TextInputType.text,),
         const SizedBox(height: AppSizes.height,),
 
         //giriş yap butonu,
         CustomElevatedButtonWidget(
             text: AppStrings.login_button, onPressed: () {
-            Navigator.pushReplacementNamed(context, "/home_page");
+              String email = _email_controller.text.trim();
+              String password = _password_controller.text.trim();
+
+            ref.read(view_model).loginButton(context,email, password);
         }),
 
         const SizedBox(height: AppSizes.height,),

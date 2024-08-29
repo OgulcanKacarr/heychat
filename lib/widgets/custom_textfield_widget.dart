@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 class CustomTextfieldWidget extends StatefulWidget {
@@ -9,6 +10,10 @@ class CustomTextfieldWidget extends StatefulWidget {
   final bool isPassword;
   final Widget prefixIcon;
   final Widget? suffixIcon;
+  final bool useSpace;
+  final bool isOnChange;
+  final Function(String)? onchange_func;
+
 
   CustomTextfieldWidget({
     required this.hint,
@@ -17,6 +22,9 @@ class CustomTextfieldWidget extends StatefulWidget {
     required this.isPassword,
     required this.prefixIcon,
     this.suffixIcon,
+    this.useSpace = false,
+    this.isOnChange = false,
+    this.onchange_func
   });
 
   @override
@@ -73,6 +81,10 @@ class _CustomTextfieldWidgetState extends State<CustomTextfieldWidget> {
         )
             : null,
       ),
+      onChanged: widget.isOnChange ? widget.onchange_func : null,
+      inputFormatters: widget.useSpace
+          ? [] // Boşluk karakterine izin ver
+          : [FilteringTextInputFormatter.deny(RegExp(r'\s'))], // Boşluk karakterini engelle
     );
   }
 }
