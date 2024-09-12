@@ -16,21 +16,18 @@ import 'package:image_picker/image_picker.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:image/image.dart' as img;
 
-class ConstMethods extends ChangeNotifier{
+class ConstMethods extends ChangeNotifier {
   final FirebaseAuthService _firebaseAuthService = FirebaseAuthService();
   final FirebaseFirestoreService _firestoreService = FirebaseFirestoreService();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final ImagePicker _picker = ImagePicker();
 
-
-
-  //kullanıcı bilgilerini çekme metodu
-   Future<Users?> getUserInfo(BuildContext context, String user_id) async {
-    Users? user_info = await _firebaseAuthService.getUsersFromFirebase(context,user_id);
+  // Kullanıcı bilgilerini çekme metodu
+  Future<Users?> getUserInfo(BuildContext context, String user_id) async {
+    Users? user_info = await _firebaseAuthService.getUsersFromFirebase(context, user_id);
     notifyListeners();
     return user_info;
   }
-
 
   // Fotoğrafları getirme metodu
   Widget showCachedImage(
@@ -59,16 +56,18 @@ class ConstMethods extends ChangeNotifier{
     }
   }
 
-
-  //Kullanıcının Galerisinden Fotoğraf seç ve database'e ekle
-  Future<void> selectAndUploadImage(
-      BuildContext context, bool isCoverPhoto) async {
+  // Fotoğraf seçme ve yükleme metodu
+  Future<File?> selectAndUploadImage(
+      BuildContext context, {
+        required String imageType,
+        String caption = ""
+      }) async {
     try {
       // Galeriden fotoğraf seç
       var pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-      if (pickedFile == null) return;
+      if (pickedFile == null) return null;
 
-      // galeriden alınan Fotoğrafı kırp
+      // Fotoğrafı kırp
       var croppedImage = await ImageCropper().cropImage(
         sourcePath: pickedFile.path,
         aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
@@ -80,27 +79,34 @@ class ConstMethods extends ChangeNotifier{
         ],
       );
 
-      if (croppedImage == null) return;
+      if (croppedImage == null) return null;
 
       // Fotoğrafı yeniden boyutlandır
       var resizedFile = await _resizeImage(context, croppedImage);
-      if (resizedFile == null) return;
+      if (resizedFile == null) return null;
 
       // Fotoğrafı Firebase'e yükle
-      //kapak fotoğrafı mı profil fotoğrafı mı olarak değer ver
-      String download_url = "";
-      if (isCoverPhoto) {
-          download_url = await _firestoreService.addCoverPhotoInFirebaseDatabase(context, resizedFile);
-      } else {
-         download_url = await _firestoreService.addProfilePhotoInFirebaseDatabase(context, resizedFile);
+      String downloadUrl = "";
+      switch (imageType) {
+        case 'cover':
+          downloadUrl = await _firestoreService.addCoverPhotoInFirebaseDatabase(context, resizedFile);
+          break;
+        case 'profile':
+          downloadUrl = await _firestoreService.addProfilePhotoInFirebaseDatabase(context, resizedFile);
+          break;
+        case 'post':
+          await _firestoreService.addPost(context, resizedFile, caption);
+          break;
+        default:
+          throw Exception('Invalid image type');
       }
       notifyListeners();
-
+      return resizedFile; // Fotoğrafı döndür
     } catch (e) {
       print(e.toString());
       ShowSnackBar.show(context, e.toString());
+      return null; // Hata durumunda null döndür
     }
-    notifyListeners();
   }
 
   // Fotoğrafı yeniden boyutlandır
@@ -115,7 +121,12 @@ class ConstMethods extends ChangeNotifier{
 
       int targetWidth = AppSizes.screenWidth(context).toInt();
       int targetHeight = (AppSizes.screenHeight(context) * 0.4).toInt();
-      var resizedImage = img.copyResize(decodedImage, width: targetWidth, height: targetHeight);
+      var resizedImage = img.copyResize(
+        decodedImage,
+        width: targetWidth,
+        height: targetHeight,
+        interpolation: img.Interpolation.average,
+      );
 
       final resizedFilePath = '${imageFile.path}_${_auth.currentUser?.uid}.png';
       File resizedFile = File(resizedFilePath);
@@ -128,19 +139,17 @@ class ConstMethods extends ChangeNotifier{
     }
   }
 
-
-  //Profil fotoğrafı sil
-  Future<void> removeProfilPhoto(BuildContext context) async {
-    String status =  await _firestoreService.deleteProfilePhotoInFirebaseDatabase(context);
-    ShowSnackBar.show(context, status);
-     notifyListeners();
-  }
-  //kapak fotoğrafı sil
-  Future<void> removeCoverPhoto(BuildContext context) async {
-    String status =  await _firestoreService.deleteCoverPhotoInFirebaseDatabase(context);
+  // Profil fotoğrafı sil
+  Future<void> removeProfilePhoto(BuildContext context) async {
+    String status = await _firestoreService.deleteProfilePhotoInFirebaseDatabase(context);
     ShowSnackBar.show(context, status);
     notifyListeners();
   }
 
-
+  // Kapak fotoğrafı sil
+  Future<void> removeCoverPhoto(BuildContext context) async {
+    String status = await _firestoreService.deleteCoverPhotoInFirebaseDatabase(context);
+    ShowSnackBar.show(context, status);
+    notifyListeners();
+  }
 }

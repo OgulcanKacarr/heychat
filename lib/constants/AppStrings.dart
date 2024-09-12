@@ -36,6 +36,7 @@ class AppStrings {
   static const String system_error = "Sistem kaynaklı bir hata oluştu, hata mesajı -> ";
   static const String noUploadProfilePhoto = "Profil fotoğrafı boş olduğu için işlem tamamlanamadı";
   static const String noUploadCoverPhoto = "Kapak fotoğrafı boş olduğu için işlem tamamlanamadı";
+  static const String noPostSelectPhoto = "Gönderi fotoğrafı seçilmedi";
 
   // Navigation & Actionsc
   static const String nextPage = "İleri";
@@ -95,6 +96,10 @@ class AppStrings {
   static const String chooseColor = "Bir renk seç";
   static const String bottomBarColorSettings = "Alt Bar Rengi";
   static const String appBarColorSettings = "Üst Bar Rengi";
+  static const String add_post = "Gönderi paylaş";
+  static const String description_hint = "Açıklama";
+  static const String description_hint_error = "Lütfen bir fotoğraf seçin ve açıklama yazın.";
+  static const String choose_photo = "Fotoğraf Seç";
 
   // Registration Steps
   static const String registrationStep = "Yaklaştık";
@@ -102,6 +107,7 @@ class AppStrings {
 
   // Firebase
   static const String users = "Users";
+  static const String posts = "Posts";
   static const String profilePhotoInFirebase = "ProfilePhoto";
   static const String coverPhotoInFirebase = "CoverPhoto";
 

@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:heychat/services/firebase_firestore_service.dart';
-import 'package:heychat/view_model/look_page_viewmodel.dart';
+import 'package:heychat/view_model/profil/look_page_viewmodel.dart';
 
 
 class RequestsPageViewModel extends ChangeNotifier {

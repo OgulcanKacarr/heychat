@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:heychat/model/ButtonFollowViewModel.dart';
 import 'package:heychat/services/firebase_firestore_service.dart';
 
 class LookPageViewmodel extends ChangeNotifier {

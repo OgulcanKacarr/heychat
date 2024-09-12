@@ -7,7 +7,7 @@ import 'package:heychat/services/firebase_auth_service.dart';
 import 'package:heychat/view/auth/create_page.dart';
 import 'package:heychat/view/auth/login_page.dart';
 import 'package:heychat/view/chats/chats_page.dart';
-import 'package:heychat/view/nav/flow_page.dart';
+import 'package:heychat/view/feed/feed_page.dart';
 import 'package:heychat/view/nav/home_page.dart';
 import 'package:heychat/view/profile/look_profile.dart';
 import 'package:heychat/view/profile/profile_page.dart';
@@ -101,13 +101,13 @@ class _MainState extends State<Main> with WidgetsBindingObserver {
         "/reset_password_page": (context) => const ResetPasswordPage(),
         "/chats_page": (context) =>  const ChatsPage(),
         "/search_page": (context) =>    SearchPage(),
-        "/flow_page": (context) => const FlowPage(),
         "/profile_page": (context) => const ProfilePage(),
         "/settings_page": (context) => const SettingsPage(),
         "/settings_feed_page": (context) =>   SettingsAppColorPage(),
         "/settings_personel_page": (context) =>   const SettingsPersonelPage(),
         "/look_page": (context) =>    LookProfile(),
         "/request_page": (context) =>    RequestsPage(),
+        "/feed_page": (context) =>    FeedPage(),
       },
     );
   }

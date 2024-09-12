@@ -87,8 +87,7 @@ class _CustomAppBarWidgetState extends ConsumerState<CustomAppBarWidget> {
               onSelected: (String result) {
                 switch (result) {
                   case "post":
-                  // Handle post action
-                  ref.watch(view_model).updateNotificationCount(3);
+                    Navigator.pushReplacementNamed(context, "/feed_page");
                     break;
                   case "requests":
                     Navigator.pushReplacementNamed(context, "/request_page");

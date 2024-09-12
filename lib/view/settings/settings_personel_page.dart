@@ -147,7 +147,7 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
                           TextButton(
                               onPressed: () async {
                                 // Profil fotoğrafı değiştirme işlevi
-                                await _constMethods.selectAndUploadImage(context, false);
+                                await _constMethods.selectAndUploadImage(context, imageType: "profile");
 
                                 setState(() {
                                   _getUsers = _constMethods.getUserInfo(context,_auth.currentUser!.uid);
@@ -160,7 +160,7 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
                           TextButton(
                               onPressed: () async {
                                 // Kapak fotoğrafı değiştirme işlevi
-                                await _constMethods.selectAndUploadImage(context, true);
+                                await _constMethods.selectAndUploadImage(context, imageType: "cover");
                                 setState(() {
                                   _getUsers = _constMethods.getUserInfo(context,_auth.currentUser!.uid,);
                                 });
@@ -175,7 +175,7 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
                           IconButton(
                               onPressed: () async {
                                 // Profil fotoğrafı silme işlevi
-                                await _constMethods.removeProfilPhoto(context);
+                                await _constMethods.removeProfilePhoto(context);
 
                               },
                               icon:

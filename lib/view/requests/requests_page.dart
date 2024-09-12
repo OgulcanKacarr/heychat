@@ -1,12 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heychat/constants/AppStrings.dart';
 import 'package:heychat/constants/ConstMethods.dart';
+import 'package:heychat/view_model/request/requests_page_view_model.dart';
 import 'package:heychat/widgets/custom_app_bar_widget.dart';
-import 'package:intl/intl.dart';
 import 'package:heychat/model/Users.dart';
-import 'package:heychat/view_model/requests_page_view_model.dart';
 
 final viewModel = ChangeNotifierProvider((ref) => RequestsPageViewModel());
 

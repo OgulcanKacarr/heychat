@@ -7,10 +7,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heychat/constants/AppSizes.dart';
 import 'package:heychat/constants/AppStrings.dart';
 import 'package:heychat/constants/ShowSnackBar.dart';
-import 'package:heychat/model/ButtonFollowViewModel.dart';
 import 'package:heychat/model/Users.dart';
 import 'package:heychat/services/firebase_firestore_service.dart';
-import 'package:heychat/view_model/look_page_viewmodel.dart';
+import 'package:heychat/view_model/profil/look_page_viewmodel.dart';
 import 'package:heychat/widgets/custom_indicator_widget.dart';
 
 final viewModelProvider = ChangeNotifierProvider((ref) => LookPageViewmodel());
@@ -28,7 +27,6 @@ class _LookProfileState extends ConsumerState<LookProfile> {
   late Future<Users?> _futureUser;
   bool _isOnline = false;
   String? _currentUserId;
-  Buttonfollowviewmodel _buttonfollowviewmodel = Buttonfollowviewmodel();
 
 
   @override

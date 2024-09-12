@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,8 +5,7 @@ import 'package:heychat/constants/AppSizes.dart';
 import 'package:heychat/constants/AppStrings.dart';
 import 'package:heychat/constants/ConstMethods.dart';
 import 'package:heychat/model/Users.dart';
-import 'package:heychat/view_model/profile_page_viewmodel.dart';
-import 'package:heychat/widgets/custom_elevated_button_widget.dart';
+import 'package:heychat/view_model/profil/profile_page_viewmodel.dart';
 import 'package:heychat/widgets/custom_indicator_widget.dart';
 
 final viewModelProvider = ChangeNotifierProvider<ProfilePageViewmodel>(

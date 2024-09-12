@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:heychat/constants/AppStrings.dart';
 import 'package:heychat/constants/FbErrorsMessages.dart';
 import 'package:heychat/constants/ShowSnackBar.dart';
+import 'package:heychat/model/Posts.dart';
 
 import 'package:heychat/model/Users.dart';
 import 'package:heychat/services/firebase_storage_service.dart';
@@ -203,8 +204,6 @@ class FirebaseFirestoreService {
       return "${AppStrings.failedToRetrieveUserInfo}$e";
     }
   }
-
-
 
 
 
@@ -506,6 +505,49 @@ class FirebaseFirestoreService {
       print("Takip isteklerini alırken hata oluştu: ${e.toString()}");
       return [];
     }
+  }
+
+
+
+  //Post bilgilerini ekle
+  Future<String> addPost(BuildContext context, File image,
+      String caption) async {
+
+    String userId = _auth.currentUser!.uid;
+    String postId = FirebaseFirestore.instance
+        .collection(AppStrings.posts)
+        .doc()
+        .id;
+
+    List<String> likes = [];
+    List<String> comments = [];
+    //postu storage ekle ve linkini al
+    String image_url = await _firebaseStorageService.addPostInStorage(image, userId);
+
+    DateTime date = DateTime.now();
+    var timestamp = Timestamp.fromDate(date);
+
+    Posts post =
+    Posts(postId: postId,
+        userId: userId,
+        imageUrl: image_url,
+        likes: likes,
+        comments: comments,
+        caption: caption,
+        createdAt:timestamp);
+
+    //Postları fb ekle
+    _firebaseFirestore
+        .collection(AppStrings.posts)
+        .doc(postId)
+        .set(post.toFirestore());
+
+    //postu paylaşanın postlarına ekleme yap
+    await _firebaseFirestore.collection(AppStrings.users).doc(userId).update({
+      'posts': FieldValue.arrayUnion([postId])
+    });
+    
+    return image_url;
   }
 
 

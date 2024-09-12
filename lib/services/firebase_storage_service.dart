@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:heychat/constants/AppStrings.dart';
+import 'package:uuid/uuid.dart';
 
 class FirebaseStorageService{
 
@@ -79,6 +80,17 @@ class FirebaseStorageService{
     }
   }
 
-  
+
+
+  //Post ekle
+  Future<String> addPostInStorage(File image, String userId) async {
+    Uuid uuid = const Uuid();
+    Reference _ref = _firebaseStorage.ref().child("${AppStrings.posts}/$userId/${uuid.v4()}.jpg");
+    UploadTask task = _ref.putFile(image);
+    TaskSnapshot snapshot = await task;
+    return await snapshot.ref.getDownloadURL();
+  }
+
+
 
 }

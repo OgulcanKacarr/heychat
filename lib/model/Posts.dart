@@ -1,47 +1,47 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:heychat/model/Posts.dart';
 
 class Posts {
-  String? post_id;
-  String? user_id;
-  String content;
-  String? image_url;
-  DateTime created_time;
-  int likes;
-  List<String>? comments;
+  String postId;
+  String userId;
+  String imageUrl;
+  String caption;
+  List<String> likes;
+  List<String> comments;
+  Timestamp createdAt;
 
   Posts({
-    this.post_id,
-    this.user_id,
-    required this.content,
-    this.image_url,
-    DateTime? created_time,
-    this.likes = 0,
-    this.comments,
-  }) : created_time = created_time ?? DateTime.now(); // Varsayılan olarak mevcut tarih atanır
+    required this.postId,
+    required this.userId,
+    required this.imageUrl,
+    required this.createdAt,
+    this.caption = '',
+    this.likes = const [],
+    this.comments = const [],
+  });
 
-  // Firestore'dan verileri alan fabrika yöntemi
-  factory Posts.fromFirestore(Map<String, dynamic> data) {
+  factory Posts.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
+    final data = doc.data()!;
     return Posts(
-      post_id: data['post_id'],
-      user_id: data['user_id'],
-      content: data['content'] ?? '',
-      image_url: data['image_url'],
-      created_time: (data['created_time'] as Timestamp).toDate(),
-      likes: data['likes'] ?? 0,
-      comments: data['comments'] != null ? List<String>.from(data['comments']) : null,
+      postId: data['postId'],
+      userId: data['userId'],
+      imageUrl: data['imageUrl'],
+      caption: data['caption'] ?? '',
+      likes: List<String>.from(data['likes'] ?? []),
+      comments: List<String>.from(data['comments'] ?? []),
+      createdAt: data['createdAt'], // Firestore'dan timestamp olarak alıyoruz
     );
   }
 
-  // Verileri Firestore'a kaydetmek için bir harita yapısına dönüştüren yöntem
   Map<String, dynamic> toFirestore() {
     return {
-      if (post_id != null) 'post_id': post_id,
-      if (user_id != null) 'user_id': user_id,
-      'content': content,
-      if (image_url != null) 'image_url': image_url,
-      'created_time': Timestamp.fromDate(created_time),
+      'postId': postId,
+      'userId': userId,
+      'imageUrl': imageUrl,
+      'caption': caption,
       'likes': likes,
-      if (comments != null) 'comments': comments,
+      'comments': comments,
+      'createdAt': createdAt,
     };
   }
 }

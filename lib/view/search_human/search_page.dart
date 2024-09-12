@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heychat/constants/AppStrings.dart';
 import 'package:heychat/constants/ConstMethods.dart';
 import 'package:heychat/model/Users.dart';
-import 'package:heychat/view_model/search_page_viewmodel.dart';
+import 'package:heychat/view_model/search/search_page_viewmodel.dart';
 import 'package:heychat/widgets/custom_textfield_widget.dart';
 
 final view_model = ChangeNotifierProvider((ref) => SearchPageViewmodel());
