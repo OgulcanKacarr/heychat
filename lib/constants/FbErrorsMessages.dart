@@ -24,7 +24,7 @@ class Fberrorsmessages {
 };
 
   String handleError(String errorCode){
-    String errorMessage = authErrors[errorCode] ?? AppStrings.error;
+    String errorMessage = authErrors[errorCode] ?? AppStrings.system_error;
     return errorMessage;
   }
 }

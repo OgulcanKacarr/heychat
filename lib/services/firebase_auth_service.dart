@@ -22,7 +22,7 @@ class FirebaseAuthService {
       //kullanıcı adını kontrol et
       bool isUsernameTaken = await _firestoreService.checkUsername(context, username);
       if (isUsernameTaken) {
-        ShowSnackBar.show(context, AppStrings.username_already);
+        ShowSnackBar.show(context, AppStrings.usernameAlreadyTaken);
         return;
       }
       //kullanıcı oluştur
@@ -46,7 +46,7 @@ class FirebaseAuthService {
         // Kullanıcı bilgilerini veritabanına ekle
         _firestoreService.addUserInfoInDatabase(context, user);
       } else {
-        ShowSnackBar.show(context, AppStrings.user_creation_failed);
+        ShowSnackBar.show(context, AppStrings.userCreationFailed);
       }
     } on FirebaseAuthException catch (e) {
       // Hata mesajını al ve kullanıcıya göster
@@ -54,7 +54,7 @@ class FirebaseAuthService {
       ShowSnackBar.show(context, errorMessage);
     } catch (e) {
       // Diğer tüm hatalar için genel bir hata mesajı göster
-      ShowSnackBar.show(context, AppStrings.error);
+      ShowSnackBar.show(context, AppStrings.system_error);
     }
   }
 
@@ -77,7 +77,7 @@ class FirebaseAuthService {
         });
 
       } else {
-        ShowSnackBar.show(context, AppStrings.login_failed);
+        ShowSnackBar.show(context, AppStrings.loginFailed);
       }
     } on FirebaseAuthException catch (e) {
       // Hata mesajını al ve kullanıcıya göster
@@ -85,7 +85,7 @@ class FirebaseAuthService {
       ShowSnackBar.show(context, errorMessage);
     } catch (e) {
       // Diğer tüm hatalar için genel bir hata mesajı göster
-      ShowSnackBar.show(context, AppStrings.error);
+      ShowSnackBar.show(context, AppStrings.system_error);
     }
   }
 
@@ -123,6 +123,7 @@ class FirebaseAuthService {
   //Kullanıcı daha önceden giriş yaptı mı?
   Future<bool> checkLoginStatus(BuildContext context) async {
     if (_auth.currentUser != null) {
+      setUserOnline(context, _auth.currentUser!);
       return true;
     } else {
       return false;

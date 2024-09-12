@@ -20,16 +20,18 @@ class LoginPage extends ConsumerStatefulWidget {
 class _LoginPageState extends ConsumerState<LoginPage> {
   final TextEditingController _email_controller = TextEditingController();
   final TextEditingController _password_controller = TextEditingController();
+  bool _isPasswordVisible = false;
+
   @override
   Widget build(BuildContext context) {
-    var read = ref.read(view_model);
     var watch = ref.watch(view_model);
+    var read = ref.read(view_model);
     return Scaffold(
-      body: _buildBody(read,watch),
+      body: _buildBody(context, watch,read),
     );
   }
 
-  Widget _buildBody(var read, var watch) {
+  Widget _buildBody(BuildContext context, LoginPageViewmodel watch, LoginPageViewmodel read) {
     return SingleChildScrollView(
       child: Container(
         height: AppSizes.screenHeight(context),
@@ -45,14 +47,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     child: Padding(
                       padding: const EdgeInsets.all(AppSizes.paddingSmall),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           //Başlık
-                          const Text(AppStrings.login_title,style: TextStyle(
-                             color: Colors.pinkAccent,
-                             fontSize: AppSizes.paddingLarge,
-                             fontWeight: FontWeight.bold
-                           ),),
-                          loginForm(),
+                          const Text(AppStrings.login,style: TextStyle(
+                              color: Colors.pinkAccent,
+                              fontSize: AppSizes.paddingLarge,
+                              fontWeight: FontWeight.bold
+                          ), textAlign: TextAlign.center),
+                          loginForm(context, watch),
                         ],
                       ),
                     ),
@@ -66,61 +69,77 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     );
   }
 
-
-  Widget loginForm(){
+  Widget loginForm(BuildContext context, LoginPageViewmodel viewModel) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SizedBox(height: AppSizes.paddingLarge,),
+        const SizedBox(height: AppSizes.paddingLarge),
 
-        //email adresini al
+        // Email adresini al
         CustomTextfieldWidget(
-          hint: AppStrings.enter_email,
+          hint: AppStrings.enterEmail,
           controller: _email_controller,
           prefixIcon: const Icon(Icons.email),
           keyboardType: TextInputType.emailAddress,
-          isPassword: false,),
-        const SizedBox(height: AppSizes.height,),
+          isPassword: false,
+        ),
+        const SizedBox(height: AppSizes.height),
 
-        //Şifreyi al
+        // Şifreyi al
         CustomTextfieldWidget(
-          hint: AppStrings.enter_password,
+          hint: AppStrings.enterPassword,
           controller: _password_controller,
           prefixIcon: const Icon(Icons.lock),
-          suffixIcon: const Icon(Icons.remove_red_eye),
-          isPassword: true,
-          useSpace: true,
-          keyboardType: TextInputType.text,),
-        const SizedBox(height: AppSizes.height,),
+          suffixIcon: IconButton(
+            icon: Icon(_isPasswordVisible ? Icons.visibility : Icons.visibility_off),
+            onPressed: () {
+              setState(() {
+                _isPasswordVisible = !_isPasswordVisible;
+              });
+            },
+          ),
+          isPassword: !_isPasswordVisible,
+          keyboardType: TextInputType.text,
+        ),
+        const SizedBox(height: AppSizes.height),
 
-        //giriş yap butonu,
+        // Giriş yap butonu
         CustomElevatedButtonWidget(
-            text: AppStrings.login_button, onPressed: () {
+            text: AppStrings.login,
+            onPressed: () {
               String email = _email_controller.text.trim();
               String password = _password_controller.text.trim();
 
-            ref.read(view_model).loginButton(context,email, password);
-        }),
+              ref.read(view_model).loginButton(context, email, password);
+            }
+        ),
 
-        const SizedBox(height: AppSizes.height,),
-        //ya da
-        const Align(alignment:Alignment.center, child: Text(AppStrings.or)),
-        const SizedBox(height: AppSizes.height,),
+        const SizedBox(height: AppSizes.height),
+
+        // Ya da
+        const Align(alignment: Alignment.center, child: Text(AppStrings.or)),
+        const SizedBox(height: AppSizes.height),
         const CustomIndicatorWidget(),
-        const SizedBox(height: AppSizes.height,),
+        const SizedBox(height: AppSizes.height),
 
+        // Kayıt ol butonu
+        TextButton(
+            onPressed: () {
+              ref.read(view_model).goRegisterPage(context);
+            },
+            child: const Text(AppStrings.registerButton)
+        ),
+        const SizedBox(height: AppSizes.height),
 
-        //kayıt ol butonu
-        TextButton(onPressed: (){
-            ref.read(view_model).goRegisterPage(context);
-        }, child: const Text(AppStrings.register_button)),
-        const SizedBox(height: AppSizes.height,),
-
-        //şifre sıfırlama butonu
-        TextButton(onPressed: (){
-          ref.read(view_model).goResetPasswordPage(context);
-        }, child: const Text(AppStrings.did_you_forget_your_password)),
-
+        // Şifre sıfırlama butonu
+        TextButton(
+            onPressed: () {
+              ref.read(view_model).goResetPasswordPage(context);
+            },
+            child: const Text(AppStrings.did_you_forget_your_password)
+        ),
       ],
     );
   }
 }
+

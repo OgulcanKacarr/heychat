@@ -20,9 +20,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   //ayarlar sayfasındaki butonlar
   List<String> settings_buttons = [
-    AppStrings.personal_settings,
-    AppStrings.app_settings,
-    AppStrings.notification_settings,
+    AppStrings.personalSettings,
+    AppStrings.appColorSettings,
+    AppStrings.notificationSettings,
   ];
 
   @override
@@ -30,7 +30,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     var watch = ref.watch(view_model);
     var read = ref.read(view_model);
     return Scaffold(
-      appBar: CustomAppBarWidget(title: AppStrings.settings,isBack: false, centerTitle: true,onPressed:(){
+      appBar: CustomAppBarWidget(title: AppStrings.appSettings,isBack: false, centerTitle: true,onPressed:(){
         Navigator.pushReplacementNamed(context, "/home_page");
       }),
       body: _buildBody(),
@@ -40,7 +40,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           await read.logout(context);
         },
         child: const Text(
-          AppStrings.exit,
+          AppStrings.logout,
           style: TextStyle(
               fontSize: AppSizes.paddingMedium,
               fontWeight: FontWeight.bold,
@@ -73,10 +73,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       trailing: const Icon(Icons.arrow_right),
       onTap: () {
         // settings_feed page'e git
-        if(settings_buttons[index] == AppStrings.app_settings){
+        if(settings_buttons[index] == AppStrings.appColorSettings){
           Navigator.pushReplacementNamed(context, "/settings_feed_page", arguments: settings_buttons[index]);
         }
-        if(settings_buttons[index] == AppStrings.personal_settings){
+        if(settings_buttons[index] == AppStrings.personalSettings){
           Navigator.pushReplacementNamed(context, "/settings_personel_page", arguments: settings_buttons[index]);
         }
 

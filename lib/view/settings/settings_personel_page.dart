@@ -35,8 +35,6 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
   //kullanıcı bilgilerini getir
   late Future<Users?> _getUsers;
 
-  //datalar çekildiyse tekrar çekme
-  bool _isDataLoaded = false;
 
   //Kullanıcı bilgilerini gösterecek değişkenler
   String _display_name = "";
@@ -53,13 +51,12 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
     _usernameController = TextEditingController();
     _emailController = TextEditingController();
     _bioilController = TextEditingController();
+    _getUsers = _getUserInfo();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
-    _getUsers = _getUserInfo();
 
   }
 
@@ -71,6 +68,7 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
     _bioilController.dispose();
     super.dispose();
   }
+
 
   //Kullanıcıları veritabanından çek
   Future<Users?> _getUserInfo() async {
@@ -85,7 +83,7 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
 
     return Scaffold(
       appBar: CustomAppBarWidget(
-        title:  AppStrings.personal_settings,
+        title:  AppStrings.personalSettings,
         centerTitle: true,
         isBack: false,
         onPressed: () {
@@ -101,7 +99,7 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
             print("Hata: ${snapshot.error}");
             return Center(child: Text('Hata: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data == null) {
-            return const Center(child: Text(AppStrings.user_not_found));
+            return const Center(child: Text(AppStrings.userNotFound));
           } else {
             //kullanıcı bilgileri değişkenlere işle
             Users user = snapshot.data!;
@@ -133,7 +131,7 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
                 height: AppSizes.screenHeight(context) / 2.5,
                 child: _cover_photo.isEmpty
                     ? const Center(
-                        child: Text(AppStrings.cover_photo_not_found))
+                        child: Text(AppStrings.coverPhotoNotFound))
                     : _constMethods.showCachedImage(_cover_photo),
               ),
 
@@ -157,7 +155,7 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
 
                               },
                               child:
-                                  const Text(AppStrings.change_profile_photo)),
+                                  const Text(AppStrings.changeProfilePhoto)),
                           const SizedBox(height: 10),
                           TextButton(
                               onPressed: () async {
@@ -167,7 +165,7 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
                                   _getUsers = _constMethods.getUserInfo(context,_auth.currentUser!.uid,);
                                 });
                               },
-                              child: const Text(AppStrings.change_cover_photo)),
+                              child: const Text(AppStrings.changeCoverPhoto)),
                         ],
                       ),
                       //fotoğrafları silme butonları
@@ -204,6 +202,7 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
                                 controller: _nameController,
                                 keyboardType: TextInputType.text,
                                 isPassword: false,
+                                useSpace: true,
                                 prefixIcon: const Icon(Icons.person)),
                           ),
                           const SizedBox(width: 10),
@@ -263,7 +262,6 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
                       const SizedBox(height: 10),
 
                       // bio değiştirme Row'u
-
                       Row(
                         children: [
                           Expanded(
@@ -290,7 +288,7 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
                       //Şifre Değişitrme butonu
                       const SizedBox(height: 10),
                       CustomElevatedButtonWidget(
-                          text: AppStrings.change_password,
+                          text: AppStrings.changePassword,
                           onPressed: () {
                             changePasswordAlertDialog(context);
                           })
@@ -318,8 +316,6 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
               ),
             ),
           )
-
-
         ],
       ),
     );
@@ -336,7 +332,7 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
         builder: (context) {
           return SingleChildScrollView(
             child: AlertDialog(
-              title: const Center(child: Text(AppStrings.change_password)),
+              title: const Center(child: Text(AppStrings.changePassword)),
               content: SizedBox(
                 width: AppSizes.screenWidth(context),
                 height: AppSizes.screenWidth(context) / 3,
@@ -347,7 +343,7 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
                     TextField(
                       controller: newPasswordController,
                       decoration: const InputDecoration(
-                        hintText: AppStrings.new_password,
+                        hintText: AppStrings.newPassword,
                       ),
                     ),
                     const SizedBox(
@@ -356,7 +352,7 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
                     TextField(
                       controller: reNewPasswordController,
                       decoration: const InputDecoration(
-                        hintText: AppStrings.re_new_password,
+                        hintText: AppStrings.confirmNewPassword,
                       ),
                     ),
                   ],
@@ -375,12 +371,12 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
                     String? reNewPassword = reNewPasswordController.text;
 
                     if (newPassword.isEmpty) {
-                      ShowSnackBar.show(context, AppStrings.new_password);
+                      ShowSnackBar.show(context, AppStrings.newPassword);
                       return;
                     }
 
                     if (reNewPassword.isEmpty) {
-                      ShowSnackBar.show(context, AppStrings.re_new_password);
+                      ShowSnackBar.show(context, AppStrings.confirmPassword);
                       return;
                     }
 

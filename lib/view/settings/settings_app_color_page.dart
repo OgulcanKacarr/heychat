@@ -85,7 +85,7 @@ class _SettingsFeedPageState extends ConsumerState<SettingsAppColorPage> {
   Widget _navbarSettings() {
     return Column(
       children: [
-        const Text(AppStrings.app_alt_bar_color_settings, style: TextStyle(fontSize: AppSizes.paddingMedium),),
+        const Text(AppStrings.bottomBarColorSettings, style: TextStyle(fontSize: AppSizes.paddingMedium),),
         Column(
           children: [
             Row(
@@ -103,7 +103,7 @@ class _SettingsFeedPageState extends ConsumerState<SettingsAppColorPage> {
                       selectedItemColor = newColor;
                     });
                   }),
-                  child: const Text(AppStrings.selected_color),
+                  child: const Text(AppStrings.activeColor),
                 ),
               ],
             ),
@@ -122,7 +122,7 @@ class _SettingsFeedPageState extends ConsumerState<SettingsAppColorPage> {
                       unselectedItemColor = newColor;
                     });
                   }),
-                  child: const Text(AppStrings.unselected_color),
+                  child: const Text(AppStrings.inactiveColor),
                 ),
               ],
             ),
@@ -154,7 +154,7 @@ class _SettingsFeedPageState extends ConsumerState<SettingsAppColorPage> {
     return Column(
       children: [
         const SizedBox(height: 20,),
-        const Text(AppStrings.app_app_bar_color_settings, style: TextStyle(fontSize: AppSizes.paddingMedium),),
+        const Text(AppStrings.appBarColorSettings, style: TextStyle(fontSize: AppSizes.paddingMedium),),
         const SizedBox(height: 10,),
         Row(
           children: [
@@ -171,7 +171,7 @@ class _SettingsFeedPageState extends ConsumerState<SettingsAppColorPage> {
                   appbar_custom_color = newColor;
                 });
               }),
-              child: const Text(AppStrings.selected_color),
+              child: const Text(AppStrings.activeColor),
             ),
           ],
         ),
@@ -200,7 +200,7 @@ class _SettingsFeedPageState extends ConsumerState<SettingsAppColorPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text(AppStrings.choose_color),
+        title: const Text(AppStrings.chooseColor),
         content: SingleChildScrollView(
           child: ColorPicker(
             pickerColor: currentColor,
@@ -230,7 +230,7 @@ class _SettingsFeedPageState extends ConsumerState<SettingsAppColorPage> {
     return Column(
       children: [
         const SizedBox(height: 20,),
-        const Text(AppStrings.floating_action_button_title, style: TextStyle(fontSize: AppSizes.paddingMedium),),
+        const Text(AppStrings.floatingActionButtonTitle, style: TextStyle(fontSize: AppSizes.paddingMedium),),
         const SizedBox(height: 10,),
         Row(
           children: [
@@ -247,7 +247,7 @@ class _SettingsFeedPageState extends ConsumerState<SettingsAppColorPage> {
                   floating_action_button_backgrond_color = newColor;
                 });
               }),
-              child: const Text(AppStrings.floating_action_button_background_color_title),
+              child: const Text(AppStrings.floatingActionButtonBackgroundColorTitle),
             ),
           ],
         ),
@@ -266,7 +266,7 @@ class _SettingsFeedPageState extends ConsumerState<SettingsAppColorPage> {
                   floating_action_button_foreground_color = newColor;
                 });
               }),
-              child: const Text(AppStrings.floating_action_button_foreground_color_title),
+              child: const Text(AppStrings.floatingActionButtonForegroundColorTitle),
             ),
           ],
         ),

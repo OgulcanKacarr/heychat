@@ -19,11 +19,11 @@ class LoginPageViewmodel extends ChangeNotifier{
   Future<void> loginButton(BuildContext context, String email, String password) async {
 
     if (email.isEmpty) {
-      ShowSnackBar.show(context, AppStrings.emtpy_email);
+      ShowSnackBar.show(context, AppStrings.emptyEmail);
       return;
     }
     if (password.isEmpty) {
-      ShowSnackBar.show(context, AppStrings.empty_password);
+      ShowSnackBar.show(context, AppStrings.emptyPassword);
       return;
     }
     if(email.isNotEmpty && password.isNotEmpty){

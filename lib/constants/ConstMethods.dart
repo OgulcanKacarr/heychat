@@ -33,15 +33,30 @@ class ConstMethods extends ChangeNotifier{
 
 
   // Fotoğrafları getirme metodu
-   Widget showCachedImage(String imageUrl, {double? width, double? height,}) {
-    return CachedNetworkImage(
-      imageUrl: imageUrl,
-      width: width,
-      height: height,
-      fit: BoxFit.cover,
-      placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-      errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
-    );
+  Widget showCachedImage(
+      String imageUrl, {
+        double? width,
+        double? height,
+      }) {
+    if (imageUrl.isEmpty) {
+      // Display a local asset image when the URL is empty
+      return Image.asset(
+        AppStrings.logo, // Ensure this is a valid local asset path
+        width: width,
+        height: height,
+        fit: BoxFit.cover,
+      );
+    } else {
+      // Use CachedNetworkImage for valid URLs
+      return CachedNetworkImage(
+        imageUrl: imageUrl.toString(),
+        width: width,
+        height: height,
+        fit: BoxFit.cover,
+        placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+        errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
+      );
+    }
   }
 
 
@@ -94,7 +109,7 @@ class ConstMethods extends ChangeNotifier{
       var imageFile = File(croppedImage.path);
       var decodedImage = img.decodeImage(await imageFile.readAsBytes());
       if (decodedImage == null) {
-        ShowSnackBar.show(context, AppStrings.error);
+        ShowSnackBar.show(context, AppStrings.system_error);
         return null;
       }
 
@@ -108,7 +123,7 @@ class ConstMethods extends ChangeNotifier{
 
       return resizedFile;
     } catch (e) {
-      ShowSnackBar.show(context, AppStrings.error);
+      ShowSnackBar.show(context, AppStrings.system_error);
       return null;
     }
   }

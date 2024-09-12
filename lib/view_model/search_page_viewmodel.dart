@@ -8,24 +8,38 @@ class SearchPageViewmodel extends ChangeNotifier {
 
   List<Users> usersList = [];
   DocumentSnapshot<Map<String, dynamic>>? lastDocument; // Son document'ı takip etmek için
+  bool hasMore = false; // Daha fazla veri olup olmadığını takip eder
 
   Future<void> searchUser(BuildContext context, String username) async {
-    var result = await _firestoreService.searchUsersFromFirebase(context, username, lastDocument);
+    try {
+      var result = await _firestoreService.searchUsersFromFirebase(context, username, lastDocument);
 
-    if (result != null) {
-      List<Users> newUsers = result['users'];
-      lastDocument = result['lastDocument']; // Son document'ı güncelleyin
+      if (result != null) {
+        List<Users> newUsers = result['users'];
+        lastDocument = result['lastDocument']; // Son document'ı güncelleyin
 
-      if (newUsers.isNotEmpty) {
-        usersList.addAll(newUsers); // Yeni kullanıcıları mevcut listeye ekleyin
-        notifyListeners(); // Dinleyicilere güncellemeyi bildirin
+        // Kullanıcıları listeye eklemeden önce var olanları kontrol et
+        Set<String?> existingUserIds = usersList.map((user) => user.uid).toSet();
+        List<Users> filteredUsers = newUsers.where((user) => !existingUserIds.contains(user.uid)).toList();
+
+        if (filteredUsers.isNotEmpty) {
+          usersList.addAll(filteredUsers); // Yeni kullanıcıları mevcut listeye ekleyin
+          notifyListeners(); // Dinleyicilere güncellemeyi bildirin
+        }
+
+        // Daha fazla veri olup olmadığını belirle
+        hasMore = newUsers.length == 5;
       }
+    } catch (e) {
+      // Hata yönetimi: Kullanıcıya uygun bir mesaj gösterebilirsiniz
+      print("Arama sırasında bir hata oluştu: $e");
     }
   }
 
   void resetSearch() {
     usersList.clear();
     lastDocument = null;
+    hasMore = false; // Arama sıfırlandığında daha fazla veri olmadığını varsay
     notifyListeners();
   }
 }

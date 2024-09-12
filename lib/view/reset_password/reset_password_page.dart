@@ -69,7 +69,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
                               //Kullanıcı emaili
                               CustomTextfieldWidget(
-                                  hint: AppStrings.enter_email,
+                                  hint: AppStrings.enterEmail,
                                   controller: _email_controller,
                                   keyboardType: TextInputType.emailAddress,
                                   isPassword: false,

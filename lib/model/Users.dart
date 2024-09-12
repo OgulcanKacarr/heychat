@@ -45,7 +45,7 @@ class Users {
       isOnline: data?['isOnline'] as bool? ?? true,
       profileImageUrl: data?['profileImageUrl'] as String? ?? '',
       coverImageUrl: data?['coverImageUrl'] as String? ?? '',
-      followers: List<String>.from(data?['followers'] ?? []),
+      followers: List<String>.from(data?['friends'] ?? []),
       sentFriendRequests: List<String>.from(data?['sentFriendRequests'] ?? []),
       receivedFriendRequests: List<String>.from(data?['receivedFriendRequests'] ?? []),
       posts: List<String>.from(data?['posts'] ?? []),

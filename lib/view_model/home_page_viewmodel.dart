@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:heychat/constants/AppStrings.dart';
 import 'package:heychat/view/chats/chats_page.dart';
@@ -10,10 +9,11 @@ class HomePageViewmodel extends ChangeNotifier {
   //sayfanın başlıklarını title'da göstermek için
   List<String> labels = [
     AppStrings.chats,
-    AppStrings.flow,
+    AppStrings.feed,
     AppStrings.search,
     AppStrings.profile,
   ];
+
   String _title = AppStrings.chats;
   //sayfanın güncel durumu
   int bottom_nav_current_index = 0;
@@ -54,7 +54,7 @@ class HomePageViewmodel extends ChangeNotifier {
                     child: Text(
                       '$_chats_notificationCount',
                       style: const TextStyle(
-                        color: Colors.greenAccent,
+                        color: Colors.black,
                         fontSize: 10,
                       ),
                     ),
@@ -65,7 +65,7 @@ class HomePageViewmodel extends ChangeNotifier {
         ),
         label: AppStrings.chats,
       ),
-      const BottomNavigationBarItem(icon: Icon(Icons.arrow_downward_rounded), label: AppStrings.flow),
+      const BottomNavigationBarItem(icon: Icon(Icons.arrow_downward_rounded), label: AppStrings.feed),
       const BottomNavigationBarItem(icon: Icon(Icons.search), label: AppStrings.search),
       const BottomNavigationBarItem(icon: Icon(Icons.person), label: AppStrings.profile),
     ];

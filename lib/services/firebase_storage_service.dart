@@ -13,7 +13,7 @@ class FirebaseStorageService{
     Reference _ref = _firebaseStorage.ref()
     .child(AppStrings.users)
     .child(_auth.currentUser!.uid)
-    .child(AppStrings.profile_photo_in_firebase);
+    .child(AppStrings.profilePhotoInFirebase);
     UploadTask task = _ref.putFile(image);
     TaskSnapshot snapshot = await task;
     return await snapshot.ref.getDownloadURL();
@@ -24,7 +24,7 @@ class FirebaseStorageService{
     Reference _ref = _firebaseStorage.ref()
         .child(AppStrings.users)
         .child(_auth.currentUser!.uid)
-        .child(AppStrings.cover_photo_in_firebase);
+        .child(AppStrings.coverPhotoInFirebase);
     UploadTask task = _ref.putFile(image);
     TaskSnapshot snapshot = await task;
     return await snapshot.ref.getDownloadURL();
@@ -41,12 +41,12 @@ class FirebaseStorageService{
           .ref()
           .child(AppStrings.users)
           .child(_auth.currentUser!.uid)
-          .child(AppStrings.profile_photo_in_firebase);
+          .child(AppStrings.profilePhotoInFirebase);
 
       // Fotoğrafı sil
       await _ref.delete();
 
-      status = AppStrings.delete_pp;
+      status = AppStrings.deleteProfilePhoto;
       return status;
     } catch (e) {
       status = "Hata: ${e.toString()}";
@@ -65,12 +65,12 @@ class FirebaseStorageService{
           .ref()
           .child(AppStrings.users)
           .child(_auth.currentUser!.uid)
-          .child(AppStrings.cover_photo_in_firebase);
+          .child(AppStrings.coverPhotoInFirebase);
 
       // Fotoğrafı sil
       await _ref.delete();
 
-      status = AppStrings.delete_cover_pp;
+      status = AppStrings.deleteCoverPhoto;
       return status;
     } catch (e) {
       status = "Hata: ${e.toString()}";

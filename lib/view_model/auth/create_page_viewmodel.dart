@@ -25,31 +25,31 @@ class CreatePageViewmodel extends ChangeNotifier {
       String re_password) async {
     // Önce boş alanların kontrolü yapılıyor
     if (name.isEmpty) {
-      ShowSnackBar.show(context, AppStrings.empty_name);
+      ShowSnackBar.show(context, AppStrings.emptyName);
       return;
     }
     if (surname.isEmpty) {
-      ShowSnackBar.show(context, AppStrings.empty_surname);
+      ShowSnackBar.show(context, AppStrings.emptySurname);
       return;
     }
     if (username.isEmpty) {
-      ShowSnackBar.show(context, AppStrings.empty_username);
+      ShowSnackBar.show(context, AppStrings.emptyUsername);
       return;
     }
     if (email.isEmpty) {
-      ShowSnackBar.show(context, AppStrings.emtpy_email);
+      ShowSnackBar.show(context, AppStrings.emptyEmail);
       return;
     }
     if (password.isEmpty) {
-      ShowSnackBar.show(context, AppStrings.empty_password);
+      ShowSnackBar.show(context, AppStrings.emptyPassword);
       return;
     }
     if (re_password.isEmpty) {
-      ShowSnackBar.show(context, AppStrings.repassword);
+      ShowSnackBar.show(context, AppStrings.confirmPassword);
       return;
     }
     if (password != re_password) {
-      ShowSnackBar.show(context, AppStrings.not_match_password);
+      ShowSnackBar.show(context, AppStrings.passwordsDoNotMatch);
       return;
     }
     //ismin ilk harfi büyük yap
@@ -82,7 +82,7 @@ class CreatePageViewmodel extends ChangeNotifier {
 
       } catch (e) {
         // Hata durumunda hata mesajı gösterin
-        ShowSnackBar.show(context, AppStrings.user_creation_failed);
+        ShowSnackBar.show(context, AppStrings.userCreationFailed);
       } finally {
         // İşlem tamamlandığında yükleme göstergesini kapat
         Navigator.of(context).pop();

@@ -74,14 +74,20 @@ class _CustomTextfieldWidgetState extends State<CustomTextfieldWidget> {
             ? GestureDetector(
           onTap: () {
             setState(() {
-              _obscureText = !_obscureText; // Toggle password visibility
+              _obscureText = !_obscureText; // Şifre görünürlüğünü değiştir
             });
           },
-          child: widget.suffixIcon,
+          child: Icon(
+            _obscureText
+                ? Icons.visibility_off // Şifre gizliyse "göz kapalı" simgesi
+                : Icons.visibility, // Şifre görünürse "göz açık" simgesi
+          ),
         )
-            : null,
+            : widget.suffixIcon,
       ),
-      onChanged: widget.isOnChange ? widget.onchange_func : null,
+      onChanged: widget.isOnChange && widget.onchange_func != null
+          ? widget.onchange_func
+          : null,
       inputFormatters: widget.useSpace
           ? [] // Boşluk karakterine izin ver
           : [FilteringTextInputFormatter.deny(RegExp(r'\s'))], // Boşluk karakterini engelle

@@ -11,6 +11,7 @@ import 'package:heychat/view/nav/flow_page.dart';
 import 'package:heychat/view/nav/home_page.dart';
 import 'package:heychat/view/profile/look_profile.dart';
 import 'package:heychat/view/profile/profile_page.dart';
+import 'package:heychat/view/requests/requests_page.dart';
 import 'package:heychat/view/reset_password/reset_password_page.dart';
 import 'package:heychat/view/search_human/search_page.dart';
 import 'package:heychat/view/settings/settings_app_color_page.dart';
@@ -48,6 +49,8 @@ class _MainState extends State<Main> with WidgetsBindingObserver {
       onAppForeground: _onAppForeground,
     );
     WidgetsBinding.instance.addObserver(_appLifecycleObserver);
+    // Uygulama başladığında kullanıcıyı çevrimiçi yapma
+
   }
 
 
@@ -56,6 +59,7 @@ class _MainState extends State<Main> with WidgetsBindingObserver {
     WidgetsBinding.instance.removeObserver(_appLifecycleObserver);
     super.dispose();
   }
+
 
   void _onAppBackground() {
     User? currentUser = _auth.currentUser;
@@ -103,6 +107,7 @@ class _MainState extends State<Main> with WidgetsBindingObserver {
         "/settings_feed_page": (context) =>   SettingsAppColorPage(),
         "/settings_personel_page": (context) =>   const SettingsPersonelPage(),
         "/look_page": (context) =>    LookProfile(),
+        "/request_page": (context) =>    RequestsPage(),
       },
     );
   }

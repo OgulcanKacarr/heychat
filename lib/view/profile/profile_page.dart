@@ -69,9 +69,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
+          print('Hata: ${snapshot.error}');
           return Center(child: Text('Hata: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data == null) {
-          return const Center(child: Text(AppStrings.user_not_found));
+          return const Center(child: Text(AppStrings.userNotFound));
         } else {
           //kullanıcı bilgileri değişkenlere işle
           Users user = snapshot.data!;
@@ -106,7 +107,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                 height: AppSizes.screenHeight(context) / 2.5,
                 child: _cover_photo.isEmpty
                     ? const Center(
-                        child: Text(AppStrings.cover_photo_not_found))
+                        child: Text(AppStrings.coverPhotoNotFound))
                     : _constMethods.showCachedImage(_cover_photo),
               ),
 
@@ -141,7 +142,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           onPressed: () {
                             Navigator.pushReplacementNamed(
                                 context, "/settings_personel_page",
-                                arguments: AppStrings.personal_settings);
+                                arguments: AppStrings.personalSettings);
                           },
                         ),
                       ],
@@ -150,7 +151,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     // Ad - soyad
                      Center(
                       child: Text(
-                        _display_name.isNotEmpty ? _display_name :  AppStrings.user_not_found,
+                        _display_name.isNotEmpty ? _display_name :  AppStrings.userNotFound,
 
                         style: const TextStyle(fontSize: AppSizes.paddingLarge),
                       ),
@@ -158,7 +159,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     // kullanıcı adı
                      Center(
                       child: Text(
-                        _username.isNotEmpty ? _username :  AppStrings.user_not_found,
+                        _username.isNotEmpty ? _username :  AppStrings.userNotFound,
                         style: const TextStyle(fontSize: AppSizes.paddingMedium),
                       ),
                     ),

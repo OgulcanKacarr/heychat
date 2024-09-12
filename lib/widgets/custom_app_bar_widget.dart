@@ -90,6 +90,10 @@ class _CustomAppBarWidgetState extends ConsumerState<CustomAppBarWidget> {
                   // Handle post action
                   ref.watch(view_model).updateNotificationCount(3);
                     break;
+                  case "requests":
+                    Navigator.pushReplacementNamed(context, "/request_page");
+
+                    break;
                   case "settings":
                     Navigator.pushReplacementNamed(context, "/settings_page");
                     break;
@@ -108,13 +112,24 @@ class _CustomAppBarWidgetState extends ConsumerState<CustomAppBarWidget> {
                   ),
                 ),
                 const PopupMenuItem<String>(
+                  value: 'requests',
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Icon(Icons.notification_important),
+                      const SizedBox(width: 5,),
+                      Text(AppStrings.requests),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem<String>(
                   value: 'settings',
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Icon(Icons.settings),
                       const SizedBox(width: 5,),
-                      Text(AppStrings.settings),
+                      Text(AppStrings.appSettings),
                     ],
                   ),
                 ),

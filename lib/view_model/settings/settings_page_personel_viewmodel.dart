@@ -36,12 +36,15 @@ class SettingsPagePersonelViewmodel extends ChangeNotifier {
   //Displayname güncelleme
   Future<void> updateNameAndSurname(
       BuildContext context, String nameAndSurname) async {
+
+    nameAndSurname = nameAndSurname[0].toUpperCase() + nameAndSurname.substring(1);
+
     data = {
       "displayName": nameAndSurname,
     };
     _auth.currentUser!.updateDisplayName(nameAndSurname);
     await _firestoreService.updateUserInfo(
-        context, nameAndSurname, data, AppStrings.empty_name);
+        context, nameAndSurname, data, AppStrings.emptyName);
     notifyListeners();
   }
 
@@ -51,7 +54,7 @@ class SettingsPagePersonelViewmodel extends ChangeNotifier {
       "username": username,
     };
     await _firestoreService.updateUserInfo(
-        context, username, data, AppStrings.empty_username);
+        context, username, data, AppStrings.emptyUsername);
     notifyListeners();
   }
 
@@ -61,7 +64,7 @@ class SettingsPagePersonelViewmodel extends ChangeNotifier {
       "email": email,
     };
     await _firestoreService.updateUserInfo(
-        context, email, data, AppStrings.emtpy_email);
+        context, email, data, AppStrings.emptyEmail);
     notifyListeners();
   }
 
@@ -73,20 +76,20 @@ class SettingsPagePersonelViewmodel extends ChangeNotifier {
   ) async {
     // Şifrelerin eşleşip eşleşmediğini kontrol et
     if (newPassword != reNewPassword) {
-      ShowSnackBar.show(context, AppStrings.not_match_password);
+      ShowSnackBar.show(context, AppStrings.passwordsDoNotMatch);
       return;
     }
     if (newPassword.isEmpty) {
-      ShowSnackBar.show(context, AppStrings.new_password);
+      ShowSnackBar.show(context, AppStrings.newPassword);
       return;
     }
     if (reNewPassword.isEmpty) {
-      ShowSnackBar.show(context, AppStrings.re_new_password);
+      ShowSnackBar.show(context, AppStrings.confirmNewPassword);
       return;
     }
     try {
       _auth.currentUser!.updatePassword(newPassword).then((onValue){
-        ShowSnackBar.show(context, AppStrings.update_password_succes);
+        ShowSnackBar.show(context, AppStrings.passwordUpdateSuccess);
       });
 
     } catch (e) {

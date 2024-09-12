@@ -21,12 +21,10 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-  final FirebaseAuthService _firebaseAuthService = FirebaseAuthService();
 
   @override
   Widget build(BuildContext context) {
     final watch = ref.watch(viewModelProvider);
-    final read = ref.read(viewModelProvider);
 
     return Scaffold(
       //appbar'ı göstermek istediğimiz yerlerde göster
