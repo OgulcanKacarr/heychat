@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:heychat/constants/AppStrings.dart';
 import 'package:heychat/view/chats/chats_page.dart';
-import 'package:heychat/view/nav/flow_page.dart';
+import 'package:heychat/view/feed/feed_page.dart';
 import 'package:heychat/view/profile/profile_page.dart';
 import 'package:heychat/view/search_human/search_page.dart';
 
@@ -92,7 +92,7 @@ class HomePageViewmodel extends ChangeNotifier {
       case 0:
         return ChatsPage();
       case 1:
-        return FlowPage();
+        return FeedPage();
       case 2:
         return SearchPage();
       case 3:

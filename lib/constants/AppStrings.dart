@@ -37,6 +37,7 @@ class AppStrings {
   static const String noUploadProfilePhoto = "Profil fotoğrafı boş olduğu için işlem tamamlanamadı";
   static const String noUploadCoverPhoto = "Kapak fotoğrafı boş olduğu için işlem tamamlanamadı";
   static const String noPostSelectPhoto = "Gönderi fotoğrafı seçilmedi";
+  static const String noCaption = "Açıklama eklemelisin!";
 
   // Navigation & Actionsc
   static const String nextPage = "İleri";
@@ -44,6 +45,7 @@ class AppStrings {
   static const String cancel = "İptal";
   static const String save = "Kaydet";
   static const String apply = "Uygula";
+  static const String share = "Paylaş";
   static const String delete = "Sil";
   static const String select = "Seç";
   static const String logout = "Çıkış Yap";
@@ -58,6 +60,7 @@ class AppStrings {
   static const String applySettings = "Ayarlar uygulandı";
   static const String changeProfilePhoto = "Profili Değiştir";
   static const String changeCoverPhoto = "Kapağı Değiştir";
+  static const String sharePostSuccesful = "Gönderi paylaşıldı.";
   static const String changePassword = "Şifre Değiştir";
   static const String oldPassword = "Eski Şifre";
   static const String newPassword = "Yeni Şifre";

@@ -36,14 +36,6 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
   late Future<Users?> _getUsers;
 
 
-  //Kullanıcı bilgilerini gösterecek değişkenler
-  String _display_name = "";
-  String _profile_photo = "";
-  String _cover_photo = "";
-  String _email = "";
-  String _username = "";
-  String _bio = "";
-
   @override
   void initState() {
     super.initState();
@@ -103,14 +95,9 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
           } else {
             //kullanıcı bilgileri değişkenlere işle
             Users user = snapshot.data!;
-            _username = user.username;
-            _bio = user.bio;
-            _display_name = user.displayName;
-            _profile_photo = user.profileImageUrl;
-            _cover_photo = user.coverImageUrl;
-            _email = user.email;
 
-            return _buildBody(watch, read);
+
+            return _buildBody(watch, read, user);
           }
         },
       ),
@@ -118,7 +105,7 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
   }
 
   Widget _buildBody(
-      SettingsPagePersonelViewmodel watch, SettingsPagePersonelViewmodel read) {
+      SettingsPagePersonelViewmodel watch, SettingsPagePersonelViewmodel read, Users user) {
     return SingleChildScrollView(
       child: Stack(
         clipBehavior: Clip.none,
@@ -129,10 +116,10 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
               SizedBox(
                 width: AppSizes.screenWidth(context),
                 height: AppSizes.screenHeight(context) / 2.5,
-                child: _cover_photo.isEmpty
+                child: user.coverImageUrl.isEmpty
                     ? const Center(
                         child: Text(AppStrings.coverPhotoNotFound))
-                    : _constMethods.showCachedImage(_cover_photo),
+                    : _constMethods.showCachedImage(user.coverImageUrl),
               ),
 
               Container(
@@ -147,10 +134,8 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
                           TextButton(
                               onPressed: () async {
                                 // Profil fotoğrafı değiştirme işlevi
-                                await _constMethods.selectAndUploadImage(context, imageType: "profile");
-
-                                setState(() {
-                                  _getUsers = _constMethods.getUserInfo(context,_auth.currentUser!.uid);
+                                setState(() async {
+                                  await watch.updateProfilePhoto(context);
                                 });
 
                               },
@@ -160,10 +145,10 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
                           TextButton(
                               onPressed: () async {
                                 // Kapak fotoğrafı değiştirme işlevi
-                                await _constMethods.selectAndUploadImage(context, imageType: "cover");
-                                setState(() {
-                                  _getUsers = _constMethods.getUserInfo(context,_auth.currentUser!.uid,);
+                                setState(() async {
+                                  await watch.updateCoverPhoto(context);
                                 });
+
                               },
                               child: const Text(AppStrings.changeCoverPhoto)),
                         ],
@@ -175,8 +160,7 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
                           IconButton(
                               onPressed: () async {
                                 // Profil fotoğrafı silme işlevi
-                                await _constMethods.removeProfilePhoto(context);
-
+                                await watch.updateProfilePhoto(context);
                               },
                               icon:
                                   const Icon(Icons.delete,color: Colors.teal,)),
@@ -198,7 +182,7 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
                         children: [
                           Expanded(
                             child: CustomTextfieldWidget(
-                                hint: _display_name,
+                                hint: user.displayName,
                                 controller: _nameController,
                                 keyboardType: TextInputType.text,
                                 isPassword: false,
@@ -221,7 +205,7 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
                         children: [
                           Expanded(
                             child: CustomTextfieldWidget(
-                                hint: _username,
+                                hint: user.username,
                                 controller: _usernameController,
                                 keyboardType: TextInputType.text,
                                 isPassword: false,
@@ -243,7 +227,7 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
                         children: [
                           Expanded(
                             child: CustomTextfieldWidget(
-                                hint: _email,
+                                hint: user.email,
                                 controller: _emailController,
                                 keyboardType: TextInputType.emailAddress,
                                 isPassword: false,
@@ -266,7 +250,7 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
                         children: [
                           Expanded(
                             child: CustomTextfieldWidget(
-                                hint: _bio.isNotEmpty ? _bio : AppStrings.bio,
+                                hint: user.bio.isNotEmpty ? user.bio : AppStrings.bio,
                                 controller: _bioilController,
                                 keyboardType: TextInputType.text,
                                 isPassword: false,
@@ -298,6 +282,7 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
               ),
             ],
           ),
+
           // Profil Fotoğrafı Tasarımı
           Positioned(
             top: AppSizes.screenHeight(context) / 2.5 - 50,
@@ -305,11 +290,11 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
             child: CircleAvatar(
               radius: 50,
               backgroundColor: Colors.grey[200], // Opsiyonel: Arka plan rengi
-              child: _profile_photo.isEmpty
+              child: user.profileImageUrl.isEmpty
                   ? const Icon(Icons.person, size: 50) // Profil fotoğrafı yoksa ikon göster
                   : ClipOval(
                 child: _constMethods.showCachedImage(
-                  _profile_photo,
+                  user.profileImageUrl,
                   width: 100,
                   height: 100,
                 ),
@@ -364,6 +349,7 @@ class _SettingsPersonelPageState extends ConsumerState<SettingsPersonelPage> {
                       Navigator.pop(context);
                     },
                     child: const Text(AppStrings.cancel)),
+
                 // Şifre değiştir
                 TextButton(
                   onPressed: () async {

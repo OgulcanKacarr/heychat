@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:heychat/constants/AppStrings.dart';
 import 'package:heychat/constants/FbErrorsMessages.dart';
 import 'package:heychat/constants/ShowSnackBar.dart';
+import 'package:heychat/model/PostWithUser.dart';
 import 'package:heychat/model/Posts.dart';
 
 import 'package:heychat/model/Users.dart';
@@ -39,8 +40,8 @@ class FirebaseFirestoreService {
   }
 
 // Kullanıcı bilgilerini database'den çekme
-  Future<Users?> getUsersInfoFromDatabase(
-      BuildContext context, String user_id) async {
+  Future<Users?> getUsersInfoFromDatabase(BuildContext context,
+      String user_id) async {
     try {
       DocumentSnapshot<Map<String, dynamic>> snapshot = await _firebaseFirestore
           .collection(AppStrings.users)
@@ -62,8 +63,8 @@ class FirebaseFirestoreService {
   }
 
   //kullanıcı profil fotoğrafını database ve storage ekleme
-  Future<String> addProfilePhotoInFirebaseDatabase(
-      BuildContext context, File image) async {
+  Future<String> addProfilePhotoInFirebaseDatabase(BuildContext context,
+      File image) async {
     if (image != null) {
       try {
         // Fotoğrafı Firebase Storage'a yükle ve indirme bağlantısını al
@@ -90,8 +91,8 @@ class FirebaseFirestoreService {
   }
 
   //Kullanıcı kapak fotoğrafını firebase'e ve storage'e ekle
-  Future<String> addCoverPhotoInFirebaseDatabase(
-      BuildContext context, File image) async {
+  Future<String> addCoverPhotoInFirebaseDatabase(BuildContext context,
+      File image) async {
     if (image != null) {
       try {
         // Fotoğrafı Firebase Storage'a yükle ve indirme bağlantısını al
@@ -206,9 +207,9 @@ class FirebaseFirestoreService {
   }
 
 
-
 // Takip isteği gönder
-  Future<void> sendFollowRequest(String currentUserId, String targetUserId) async {
+  Future<void> sendFollowRequest(String currentUserId,
+      String targetUserId) async {
     try {
       //gönderdiğim isteklere gönderdiğim kullanıcın id'sini koy
       await _firebaseFirestore
@@ -225,13 +226,14 @@ class FirebaseFirestoreService {
           'receivedFriendRequests': FieldValue.arrayUnion([currentUserId]),
         });
       });
-
     } catch (e) {
       print("İstek iptali sırasında hata oluştu: ${e.toString()}");
     }
   }
+
   // Takipten çık
-  Future<void> unFollowRequest(String currentUserId, String targetUserId) async {
+  Future<void> unFollowRequest(String currentUserId,
+      String targetUserId) async {
     try {
       await _firebaseFirestore
           .collection(AppStrings.users)
@@ -239,7 +241,6 @@ class FirebaseFirestoreService {
           .update({
         'friends': FieldValue.arrayRemove([targetUserId])
       }).then((onValue) async {
-
         await _firebaseFirestore
             .collection(AppStrings.users)
             .doc(targetUserId)
@@ -247,14 +248,14 @@ class FirebaseFirestoreService {
           'friends': FieldValue.arrayRemove([currentUserId])
         });
       });
-
     } catch (e) {
       print("UnFollow işlemi başarısız oldu: ${e.toString()}");
-
     }
   }
+
   // Eğer takip isteği gönderildiyse, isteği iptal et
-  Future<void> cancelFollowRequest(String currentUserId, String targetUserId) async {
+  Future<void> cancelFollowRequest(String currentUserId,
+      String targetUserId) async {
     try {
       // Gönderilen isteği sil
       await _firebaseFirestore
@@ -288,14 +289,13 @@ class FirebaseFirestoreService {
           .update({
         'sentFriendRequests': FieldValue.arrayRemove([currentUserId])
       });
-
-
     } catch (e) {
       print("İstek iptali sırasında hata oluştu: ${e.toString()}");
     }
-  }  // Gelen isteği kabul et
+  } // Gelen isteği kabul et
   //arkadaş isteğini kabul et
-  Future<void> acceptFollowRequest(String currentUserId, String targetUserId) async {
+  Future<void> acceptFollowRequest(String currentUserId,
+      String targetUserId) async {
     try {
       // Takipçi listesine ekle
       await _firebaseFirestore
@@ -319,17 +319,22 @@ class FirebaseFirestoreService {
       print("Takip isteği kabul edilirken hata oluştu: ${e.toString()}");
     }
   }
+
   // isteink gelen kullanıcı in buton durumunu ayarlama
-  Future<bool> checkFollowReceive(String currentUserId, String targetUserId) async {
+  Future<bool> checkFollowReceive(String currentUserId,
+      String targetUserId) async {
     DocumentSnapshot userSnapshot = await _firebaseFirestore
         .collection(AppStrings.users)
         .doc(currentUserId)
         .get();
 // Veriyi bir Map'e dönüştürüyoruz
-    Map<String, dynamic>? userData = userSnapshot.data() as Map<String, dynamic>?;
+    Map<String, dynamic>? userData = userSnapshot.data() as Map<String,
+        dynamic>?;
 
 // Eğer friends listesi varsa alıyoruz, yoksa boş bir liste oluşturuyoruz
-    List<dynamic> receivedFriendRequests = userData?['receivedFriendRequests'] ?? [];
+    List<
+        dynamic> receivedFriendRequests = userData?['receivedFriendRequests'] ??
+        [];
 
 // Eğer arkadaş listesinde 'targetUserId' varsa
     if (receivedFriendRequests.contains(targetUserId)) {
@@ -337,21 +342,23 @@ class FirebaseFirestoreService {
     } else {
       return false;
     }
-
-
   }
+
   //daha önce istek gönderildi mi
-  Future<bool> checkFollowSend(String currentUserId, String targetUserId) async {
+  Future<bool> checkFollowSend(String currentUserId,
+      String targetUserId) async {
     DocumentSnapshot userSnapshot = await _firebaseFirestore
         .collection(AppStrings.users)
         .doc(currentUserId)
         .get();
 
 // Veriyi bir Map'e dönüştürüyoruz
-    Map<String, dynamic>? userData = userSnapshot.data() as Map<String, dynamic>?;
+    Map<String, dynamic>? userData = userSnapshot.data() as Map<String,
+        dynamic>?;
 
 // Eğer friends listesi varsa alıyoruz, yoksa boş bir liste oluşturuyoruz
-    List<dynamic> receivedFriendRequests = userData?['sentFriendRequests'] ?? [];
+    List<dynamic> receivedFriendRequests = userData?['sentFriendRequests'] ??
+        [];
 
 // Eğer arkadaş listesinde 'targetUserId' varsa
     if (receivedFriendRequests.contains(targetUserId)) {
@@ -360,6 +367,7 @@ class FirebaseFirestoreService {
       return false;
     }
   }
+
   //takipleşiyor muyuz
   Future<bool> checkFollowing(String currentUserId, String targetUserId) async {
     DocumentSnapshot userSnapshot = await _firebaseFirestore
@@ -368,7 +376,8 @@ class FirebaseFirestoreService {
         .get();
 
 // Veriyi bir Map'e dönüştürüyoruz
-    Map<String, dynamic>? userData = userSnapshot.data() as Map<String, dynamic>?;
+    Map<String, dynamic>? userData = userSnapshot.data() as Map<String,
+        dynamic>?;
 
 // Eğer friends listesi varsa alıyoruz, yoksa boş bir liste oluşturuyoruz
     List<dynamic> myFriends = userData?['friends'] ?? [];
@@ -382,16 +391,14 @@ class FirebaseFirestoreService {
   }
 
 
-
   //kullanıcıyı çevrimiçi yap
-  Future<void> updateUserOnline(
-      BuildContext context, User user, bool status) async {
+  Future<void> updateUserOnline(BuildContext context, User user,
+      bool status) async {
     Map<String, bool> isOnline = {
       "isOnline": status,
     };
     _firebaseFirestore.collection(_users_db).doc(user.uid).update(isOnline);
   }
-
 
 
   // Kullanıcı adı daha önce kayıt olmuş mu?
@@ -429,8 +436,7 @@ class FirebaseFirestoreService {
   }
 
   //kullanıcı arama metodu
-  Future<Map<String, dynamic>?> searchUsersFromFirebase(
-      BuildContext context,
+  Future<Map<String, dynamic>?> searchUsersFromFirebase(BuildContext context,
       String username,
       DocumentSnapshot<Map<String, dynamic>>? lastDocument) async {
     try {
@@ -440,7 +446,8 @@ class FirebaseFirestoreService {
           .limit(5);
 
       if (lastDocument != null) {
-        query = query.startAfterDocument(lastDocument); // Son dokümandan sonrasını al
+        query = query.startAfterDocument(
+            lastDocument); // Son dokümandan sonrasını al
       }
 
 
@@ -470,7 +477,8 @@ class FirebaseFirestoreService {
 
 
 // Kullanıcıya gelen arkadaşlık isteklerini zaman damgasına göre getir
-  Future<List<Map<String, dynamic>>> getFriendRequests(String currentUserId) async {
+  Future<List<Map<String, dynamic>>> getFriendRequests(
+      String currentUserId) async {
     try {
       final snapshot = await FirebaseFirestore.instance
           .collection(AppStrings.users)
@@ -480,7 +488,8 @@ class FirebaseFirestoreService {
       final data = snapshot.data();
       if (data != null) {
         // Eğer gelen istekler String tipindeyse (userId'lerin listesi)
-        final receivedRequests = List<String>.from(data['receivedFriendRequests'] ?? []);
+        final receivedRequests = List<String>.from(
+            data['receivedFriendRequests'] ?? []);
         // Kullanıcı bilgilerini almak için id'leri listeye ekleyin
         List<Map<String, dynamic>> detailedRequests = [];
         for (var userId in receivedRequests) {
@@ -507,12 +516,28 @@ class FirebaseFirestoreService {
     }
   }
 
+  //Takip ettiğim kişileri çek
+  Future<List<String>> getMyFriends(String currentUserId) async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> snapshot =
+      await _firebaseFirestore.collection(AppStrings.users).doc(currentUserId).get();
+      Map<String, dynamic>? userData = snapshot.data();
+      if (userData != null && userData['friends'] is List) {
+        return List<String>.from(userData['friends']);
+      } else {
+        return [];
+      }
+    } catch (e) {
+      print("Error getting friend ids: $e");
+      throw e;
+    }
+  }
 
 
-  //Post bilgilerini ekle
+
+  //Post paylaş
   Future<String> addPost(BuildContext context, File image,
       String caption) async {
-
     String userId = _auth.currentUser!.uid;
     String postId = FirebaseFirestore.instance
         .collection(AppStrings.posts)
@@ -522,7 +547,8 @@ class FirebaseFirestoreService {
     List<String> likes = [];
     List<String> comments = [];
     //postu storage ekle ve linkini al
-    String image_url = await _firebaseStorageService.addPostInStorage(image, userId);
+    String image_url = await _firebaseStorageService.addPostInStorage(
+        image, userId);
 
     DateTime date = DateTime.now();
     var timestamp = Timestamp.fromDate(date);
@@ -534,7 +560,7 @@ class FirebaseFirestoreService {
         likes: likes,
         comments: comments,
         caption: caption,
-        createdAt:timestamp);
+        createdAt: timestamp);
 
     //Postları fb ekle
     _firebaseFirestore
@@ -546,10 +572,47 @@ class FirebaseFirestoreService {
     await _firebaseFirestore.collection(AppStrings.users).doc(userId).update({
       'posts': FieldValue.arrayUnion([postId])
     });
-    
+
     return image_url;
+  }
+
+  // Takip edilen kişilerin postlarını ve kullanıcı bilgilerini çek
+  Future<List<PostWithUser>> getFeedPostsWithUserInfo(BuildContext context, String currentUserId) async {
+    try {
+      // Takip edilenlerin id'lerini al
+      List<String> myFriends_id = await getMyFriends(currentUserId);
+
+      // Takip edilenlerin postlarını al
+      List<PostWithUser> postsWithUserInfo = [];
+
+      for (String friendId in myFriends_id) {
+        // Her takip edilen kişinin postlarını al
+        QuerySnapshot<Map<String, dynamic>> snapshot = await _firebaseFirestore
+            .collection(AppStrings.posts)
+            .where('userId', isEqualTo: friendId)
+            .orderBy('createdAt', descending: true)
+            .get();
+
+        // Her bir post için post sahibinin kullanıcı bilgilerini al
+        for (var doc in snapshot.docs) {
+          Posts post = Posts.fromFirestore(doc);
+
+          // Postu paylaşan kullanıcının bilgilerini al
+          Users? user = await getUsersInfoFromDatabase(context, friendId);
+
+          // Kullanıcı bulunmuşsa, post ile kullanıcıyı birleştir
+          if (user != null) {
+            postsWithUserInfo.add(PostWithUser(post: post, user: user));
+          }
+        }
+      }
+
+      return postsWithUserInfo;
+    } catch (e) {
+      print("Error getting posts with user info: $e");
+      return [];
+    }
   }
 
 
 }
-

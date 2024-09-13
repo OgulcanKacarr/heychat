@@ -13,6 +13,7 @@ import 'package:heychat/services/firebase_auth_service.dart';
 import 'package:heychat/services/firebase_firestore_service.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:image/image.dart' as img;
 
@@ -57,11 +58,8 @@ class ConstMethods extends ChangeNotifier {
   }
 
   // Fotoğraf seçme ve yükleme metodu
-  Future<File?> selectAndUploadImage(
-      BuildContext context, {
-        required String imageType,
-        String caption = ""
-      }) async {
+  Future<File?> selectImage(
+      BuildContext context) async {
     try {
       // Galeriden fotoğraf seç
       var pickedFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -85,22 +83,6 @@ class ConstMethods extends ChangeNotifier {
       var resizedFile = await _resizeImage(context, croppedImage);
       if (resizedFile == null) return null;
 
-      // Fotoğrafı Firebase'e yükle
-      String downloadUrl = "";
-      switch (imageType) {
-        case 'cover':
-          downloadUrl = await _firestoreService.addCoverPhotoInFirebaseDatabase(context, resizedFile);
-          break;
-        case 'profile':
-          downloadUrl = await _firestoreService.addProfilePhotoInFirebaseDatabase(context, resizedFile);
-          break;
-        case 'post':
-          await _firestoreService.addPost(context, resizedFile, caption);
-          break;
-        default:
-          throw Exception('Invalid image type');
-      }
-      notifyListeners();
       return resizedFile; // Fotoğrafı döndür
     } catch (e) {
       print(e.toString());
@@ -151,5 +133,10 @@ class ConstMethods extends ChangeNotifier {
     String status = await _firestoreService.deleteCoverPhotoInFirebaseDatabase(context);
     ShowSnackBar.show(context, status);
     notifyListeners();
+  }
+
+  String formatDate(DateTime date) {
+    final DateFormat formatter = DateFormat('HH:mm');
+    return formatter.format(date);
   }
 }

@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:heychat/constants/AppStrings.dart';
+import 'package:heychat/constants/ConstMethods.dart';
 import 'package:heychat/constants/ShowSnackBar.dart';
 import 'package:heychat/model/Users.dart';
 import 'package:heychat/services/firebase_auth_service.dart';
@@ -13,9 +16,17 @@ class SettingsPagePersonelViewmodel extends ChangeNotifier {
   final FirebaseAuthService _firebaseAuthService = FirebaseAuthService();
   final FirebaseFirestoreService _firestoreService = FirebaseFirestoreService();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
+  final ConstMethods _constMethods = ConstMethods();
   //kullanıcı bilgileri güncelleme listesi
   Map<String, dynamic> data = {};
+
+  //profil fotoğrafı
+  File? _profilePhoto;
+  get profilePhoto => _profilePhoto;
+
+  //Kapak fotoğrafı
+  File? _coverPhoto;
+  get coverPhoto => _coverPhoto;
 
 
 
@@ -23,6 +34,21 @@ class SettingsPagePersonelViewmodel extends ChangeNotifier {
 
 
   //Güncelleme işlemleri
+  //profil fotoğrafını güncelle
+  Future<File?> updateProfilePhoto(BuildContext context) async {
+    _profilePhoto = await _constMethods.selectImage(context);
+    _firestoreService.addProfilePhotoInFirebaseDatabase(context, _profilePhoto!);
+    notifyListeners();
+    return _profilePhoto;
+  }
+  //kapak fotoğrafını güncelle
+  Future<File?> updateCoverPhoto(BuildContext context) async {
+    _coverPhoto = await _constMethods.selectImage(context);
+    _firestoreService.addCoverPhotoInFirebaseDatabase(context, _coverPhoto!);
+    notifyListeners();
+    return _coverPhoto;
+  }
+
   //bio güncelleme
   Future<void> updateBio(BuildContext context, String bio) async {
     data = {
@@ -47,6 +73,8 @@ class SettingsPagePersonelViewmodel extends ChangeNotifier {
         context, nameAndSurname, data, AppStrings.emptyName);
     notifyListeners();
   }
+
+
 
   //username güncelleme
   Future<void> updateUsername(BuildContext context, String username) async {
