@@ -87,7 +87,7 @@ class _CustomAppBarWidgetState extends ConsumerState<CustomAppBarWidget> {
               onSelected: (String result) {
                 switch (result) {
                   case "post":
-                    Navigator.pushReplacementNamed(context, "/feed_page");
+                    Navigator.pushReplacementNamed(context, "/post_page");
                     break;
                   case "requests":
                     Navigator.pushReplacementNamed(context, "/request_page");

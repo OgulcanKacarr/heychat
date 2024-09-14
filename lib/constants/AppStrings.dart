@@ -103,6 +103,7 @@ class AppStrings {
   static const String description_hint = "Açıklama";
   static const String description_hint_error = "Lütfen bir fotoğraf seçin ve açıklama yazın.";
   static const String choose_photo = "Fotoğraf Seç";
+  static const String enter_comment = "Yorum yap";
 
   // Registration Steps
   static const String registrationStep = "Yaklaştık";

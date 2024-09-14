@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:heychat/constants/AppStrings.dart';
 import 'package:heychat/constants/FbErrorsMessages.dart';
 import 'package:heychat/constants/ShowSnackBar.dart';
+import 'package:heychat/model/Comments.dart';
 import 'package:heychat/model/PostWithUser.dart';
 import 'package:heychat/model/Posts.dart';
 
@@ -544,14 +545,15 @@ class FirebaseFirestoreService {
         .doc()
         .id;
 
+    DateTime date = DateTime.now();
+    var timestamp = Timestamp.fromDate(date);
+
     List<String> likes = [];
-    List<String> comments = [];
-    //postu storage ekle ve linkini al
+    List<Comments> comments = []; //postu storage ekle ve linkini al
     String image_url = await _firebaseStorageService.addPostInStorage(
         image, userId);
 
-    DateTime date = DateTime.now();
-    var timestamp = Timestamp.fromDate(date);
+
 
     Posts post =
     Posts(postId: postId,
@@ -613,6 +615,59 @@ class FirebaseFirestoreService {
       return [];
     }
   }
+
+ //Post beğen
+ Future<void> likePost(String posId, List<String> likes) async {
+   await _firebaseFirestore
+       .collection(AppStrings.posts).doc(posId)
+       .update({'likes': likes});
+ }
+
+
+
+ //yorum yap
+  Future<void> sendComment(String postId, String newComment) async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) return; // Kullanıcı giriş yapmamışsa çık
+
+    final newCommentObj = Comments(
+      userId: currentUser.uid,
+      text: newComment,
+      createdAt: Timestamp.now(),
+    );
+
+    // Firestore'daki mevcut postu al
+    DocumentSnapshot<Map<String, dynamic>> postSnapshot = await FirebaseFirestore.instance
+        .collection(AppStrings.posts)
+        .doc(postId)
+        .get();
+
+    // Yorumları al ya da boş bir liste oluştur
+    List<dynamic> commentsData = postSnapshot.data()?['comments'] ?? [];
+    List<Comments> comments = commentsData.map((data) => Comments.fromFirestore(data as Map<String, dynamic>)).toList();
+
+    // Yeni yorumu ekle
+    comments.add(newCommentObj);
+
+    // Firestore'daki 'comments' alanını güncelle
+    await FirebaseFirestore.instance
+        .collection(AppStrings.posts)
+        .doc(postId)
+        .update({'comments': comments.map((c) => c.toFirestore()).toList()});
+  }
+
+  //yorumları getir
+  Future<List<Comments>> getComments(String postId) async {
+    DocumentSnapshot<Map<String, dynamic>> postSnapshot = await FirebaseFirestore.instance
+        .collection(AppStrings.posts)
+        .doc(postId)
+        .get();
+
+    List<dynamic> commentsData = postSnapshot.data()?['comments'] ?? [];
+    return commentsData.map((data) => Comments.fromFirestore(data as Map<String, dynamic>)).toList();
+  }
+
+
 
 
 }
