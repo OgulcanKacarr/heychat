@@ -18,152 +18,115 @@ class CreatePage extends ConsumerStatefulWidget {
 }
 
 class _CreatePageState extends ConsumerState<CreatePage> {
-  final TextEditingController _email_controller = TextEditingController();
-  final TextEditingController _password_controller = TextEditingController();
-  final TextEditingController _repassword_controller = TextEditingController();
-  final TextEditingController _name_controller = TextEditingController();
-  final TextEditingController _surname_controller = TextEditingController();
-  final TextEditingController _username_controller = TextEditingController();
-  final PageController pageController = PageController();
-  int page_view_current_index = 0;
-  String register_title = AppStrings.register_button;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _repasswordController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _surnameController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final PageController _pageController = PageController();
+  int _currentPageIndex = 0;
+  String _registerTitle = AppStrings.registerButton;
 
   @override
   Widget build(BuildContext context) {
-    var watch = ref.watch(view_model);
-    var read = ref.read(view_model);
+    final viewModel = ref.watch(view_model);
+    final read = ref.read(view_model);
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text(_registerTitle),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pushReplacementNamed(context, "/login_page"),
+        ),
+        backgroundColor: Colors.pinkAccent,
+      ),
       body: SafeArea(
-        child: Stack(
-        
-          children: [
-            //geri oku
-            IconButton(
-              onPressed: () {
-                Navigator.pushReplacementNamed(context, "/login_page");
-              },
-              icon: const Icon(Icons.arrow_back),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-
-                Text(
-                  register_title,
-                  style: const TextStyle(
-                      fontSize: AppSizes.paddingLarge,
-                      color: Colors.pinkAccent,
-                      fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(
-                  height: AppSizes.height,
-                ),
-
-                CustomCard(
-                  child: Padding(
-                    padding: const EdgeInsets.all(AppSizes.paddingSmall),
+        child: Align(
+          alignment: Alignment.center,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Column(
+                children: [
+                  Center(
                     child: SizedBox(
-                      width: AppSizes.screenWidth(context),
-                      child: _loginForm(read, watch),
+                      height: AppSizes.screenWidth(context) / 2,
+                      child: CustomCard(
+                        child: _buildForm(viewModel, read),
+                      ),
                     ),
                   ),
-                )
-              ],
-        
-            )
-          ],
+                  const SizedBox(height: 20),
+                  _buildPageIndicators(),
+                  const SizedBox(height: 15),
+                  CustomElevatedButtonWidget(
+                    text: _currentPageIndex == 2
+                        ? AppStrings.registerButton
+                        : AppStrings.nextPage,
+                    onPressed: () {
+                      if (_pageController.hasClients) {
+                        int nextPage = _pageController.page!.toInt() + 1;
+
+                        if (nextPage < 3) {
+                          _pageController.animateToPage(
+                            nextPage,
+                            duration: const Duration(milliseconds: 100),
+                            curve: Curves.easeInOut,
+                          );
+                        } else {
+                          read.createUser(
+                            context,
+                            _nameController.text.trim(),
+                            _surnameController.text.trim(),
+                            _usernameController.text.trim(),
+                            _emailController.text.trim(),
+                            _passwordController.text.trim(),
+                            _repasswordController.text.trim(),
+                          );
+                        }
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  const Center(child: Text(AppStrings.or)),
+                  const SizedBox(height: 10),
+                  const CustomIndicatorWidget(),
+                  const SizedBox(height: 5),
+                  TextButton(
+                    onPressed: () => read.goLoginPage(context),
+                    child: const Text(AppStrings.login),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
-
     );
   }
 
-  Widget _loginForm(var read, var watch) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-
-          //Pageview
-          SizedBox(
-            width: AppSizes.screenWidth(context) - 20,
-            height: AppSizes.screenWidth(context) / 2,
-            child: PageView(
-              controller: pageController,
-              onPageChanged: (index) {
-                setState(() {
-                  page_view_current_index = index;
-                });
-
-                if (index == 0) {
-                  register_title = AppStrings.register_button;
-                }
-                if (index == 1) {
-                  register_title = AppStrings.register_step;
-                }
-                if (index == 2) {
-                  register_title = AppStrings.register_last_step;
-                }
-              },
-              children: [
-                _buildNameSurnamePage(),
-                _buildUsernameEmailPage(),
-                _buildPasswordPage(),
-              ],
-            ),
-          ),
-          const SizedBox(height: 3),
-          //indicatorler
-          _buildPageIndicators(),
-
-          const SizedBox(height: 15),
-
-          //İleri ve kayıt butonu
-          CustomElevatedButtonWidget(
-            text: pageController.hasClients && (page_view_current_index == 2)
-                ? AppStrings.register_button
-                : AppStrings.next_page,
-            onPressed: () {
-              if (pageController.hasClients) {
-                int nextPage = pageController.page!.toInt() + 1;
-
-                //sayfaya göre title'ı değiştir
-                if (nextPage == 0) {
-                  register_title = AppStrings.register_button;
-                }
-                if (nextPage == 1) {
-                  register_title = AppStrings.register_step;
-                }
-                if (nextPage == 2) {
-                  register_title = AppStrings.register_last_step;
-                }
-                if (nextPage < 3) {
-                  pageController.animateToPage(
-                    nextPage,
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.easeInOut,
-                  );
-                } else {
-                  // Kayıt olma işlemini burada yapabilirsiniz
-                }
-              }
-            },
-          ),
-          const SizedBox(height: 20),
-          const Text(AppStrings.or),
-          const SizedBox(height: 5),
-          const CustomIndicatorWidget(),
-          const SizedBox(height: 2),
-          //Login sayfasına götür
-          TextButton(
-            onPressed: () {
-              read.goLoginPage(context);
-            },
-            child: const Text(AppStrings.login_button),
-          ),
-        ],
-      ),
+  Widget _buildForm(var viewModel, var read) {
+    return PageView(
+      controller: _pageController,
+      onPageChanged: (index) {
+        setState(() {
+          _currentPageIndex = index;
+          if (index == 0) {
+            _registerTitle = AppStrings.registerButton;
+          } else if (index == 1) {
+            _registerTitle = AppStrings.registrationStep;
+          } else if (index == 2) {
+            _registerTitle = AppStrings.finalRegistrationStep;
+          }
+        });
+      },
+      children: [
+        _buildNameSurnamePage(),
+        _buildUsernameEmailPage(),
+        _buildPasswordPage(),
+      ],
     );
   }
 
@@ -172,13 +135,13 @@ class _CreatePageState extends ConsumerState<CreatePage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(
         3,
-        (index) => Container(
-          margin: const EdgeInsets.symmetric(horizontal: 5),
-          width: 12,
-          height: 12,
+            (index) => Container(
+          margin: const EdgeInsets.symmetric(horizontal: 4.0),
+          width: 12.0,
+          height: 12.0,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: page_view_current_index == index ? Colors.pinkAccent : Colors.grey,
+            color: _currentPageIndex == index ? Colors.pinkAccent : Colors.grey,
           ),
         ),
       ),
@@ -186,29 +149,25 @@ class _CreatePageState extends ConsumerState<CreatePage> {
   }
 
   Widget _buildNameSurnamePage() {
-    return Center(
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           CustomTextfieldWidget(
             hint: AppStrings.name,
-            controller: _name_controller,
+            controller: _nameController,
             prefixIcon: const Icon(Icons.person),
             keyboardType: TextInputType.text,
             isPassword: false,
           ),
-          const SizedBox(
-            height: AppSizes.height,
-          ),
+          const SizedBox(height: 10),
           CustomTextfieldWidget(
             hint: AppStrings.surname,
-            controller: _surname_controller,
+            controller: _surnameController,
             prefixIcon: const Icon(Icons.person),
             keyboardType: TextInputType.text,
             isPassword: false,
-          ),
-          const SizedBox(
-            height: AppSizes.height,
           ),
         ],
       ),
@@ -216,29 +175,26 @@ class _CreatePageState extends ConsumerState<CreatePage> {
   }
 
   Widget _buildUsernameEmailPage() {
-    return Center(
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           CustomTextfieldWidget(
             hint: AppStrings.username,
-            controller: _username_controller,
+            controller: _usernameController,
             prefixIcon: const Icon(Icons.person),
             keyboardType: TextInputType.text,
             isPassword: false,
+            useSpace: true,
           ),
-          const SizedBox(
-            height: AppSizes.height,
-          ),
+          const SizedBox(height: 10),
           CustomTextfieldWidget(
-            hint: AppStrings.enter_email,
-            controller: _email_controller,
+            hint: AppStrings.enterEmail,
+            controller: _emailController,
             prefixIcon: const Icon(Icons.email),
             keyboardType: TextInputType.emailAddress,
             isPassword: false,
-          ),
-          const SizedBox(
-            height: AppSizes.height,
           ),
         ],
       ),
@@ -246,31 +202,27 @@ class _CreatePageState extends ConsumerState<CreatePage> {
   }
 
   Widget _buildPasswordPage() {
-    return Center(
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           CustomTextfieldWidget(
-            hint: AppStrings.enter_password,
-            controller: _password_controller,
+            hint: AppStrings.enterPassword,
+            controller: _passwordController,
             prefixIcon: const Icon(Icons.lock),
             suffixIcon: const Icon(Icons.remove_red_eye),
             isPassword: true,
             keyboardType: TextInputType.text,
           ),
-          const SizedBox(
-            height: AppSizes.height,
-          ),
+          const SizedBox(height: 10),
           CustomTextfieldWidget(
-            hint: AppStrings.repassword,
-            controller: _repassword_controller,
+            hint: AppStrings.confirmPassword,
+            controller: _repasswordController,
             prefixIcon: const Icon(Icons.lock),
             suffixIcon: const Icon(Icons.remove_red_eye),
             isPassword: true,
             keyboardType: TextInputType.text,
-          ),
-          const SizedBox(
-            height: AppSizes.height,
           ),
         ],
       ),

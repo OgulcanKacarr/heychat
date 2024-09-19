@@ -14,6 +14,8 @@ class AppColors {
   static const Color un_selected_item_color = Color(0xFFB200D9);
 
   static const Color app_bar_background = Color(0xFF0D6E00);
+  static const Color floating_action_button_backgrond_color = Color(0xFF04A177);
+  static const Color floating_action_button_foreground_color = Color(0xFF00BB0A);
 
 
 }

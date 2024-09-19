@@ -8,7 +8,7 @@ class SharedPrefService{
   static Future<void> save(BuildContext context, String name, List<String> data) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     await sharedPreferences.setStringList(name, data);
-    ShowSnackBar.show(context, AppStrings.apply_settings);
+    ShowSnackBar.show(context, AppStrings.applySettings);
   }
 
   static Future<List<String>?> read(String name) async {

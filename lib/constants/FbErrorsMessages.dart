@@ -1,7 +1,7 @@
 
 import 'AppStrings.dart';
 
-class Firebaseerrormessages {
+class Fberrorsmessages {
   static const
   Map<String, String> authErrors = {
   // Kullanıcı giriş ve kayıt hataları
@@ -24,7 +24,7 @@ class Firebaseerrormessages {
 };
 
   String handleError(String errorCode){
-    String errorMessage = authErrors[errorCode] ?? AppStrings.error;
+    String errorMessage = authErrors[errorCode] ?? AppStrings.system_error;
     return errorMessage;
   }
 }

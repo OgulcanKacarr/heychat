@@ -1,53 +1,144 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
 class AppStrings {
+  // App General Strings
   static const String appName = "Hey Chat";
+
+  // Authentication & User Info
   static const String login = "Giriş Yap";
   static const String signUp = "Kayıt Ol";
-  static const String error = "Bilinmeyen bir hata oluştu";
-  static const String login_title = "Giriş yap";
-  static const String enter_email = "Email";
-  static const String enter_password = "Parola";
-  static const String login_button = "Giriş yap";
-  static const String register_button = "Kayıt ol";
-  static const String or = "Ya da.";
-  static const String did_you_forget_your_password = "Şifreni mi unuttun?";
+  static const String registerButton = "Kayıt Ol";
+  static const String loginFailed = "Giriş yapılamadı.";
+  static const String unknownError = "Bilinmeyen bir hata oluştu";
+  static const String userCreatedSuccessfully = "Kullanıcı başarıyla oluşturuldu.";
+  static const String userCreationFailed = "Kullanıcı oluşturulamadı.";
+  static const String userNotFound = "Kullanıcı bulunamadı.";
+  static const String usernameAlreadyTaken = "Bu kullanıcı adı zaten alınmış.";
+  static const String passwordsDoNotMatch = "Parolalar eşleşmiyor";
+  static const String ok = "tamam";
+
+
+  // User Input Prompts & Errors
+  static const String enterEmail = "Email";
+  static const String emptyEmail = "Email boş olamaz";
+  static const String enterPassword = "Parola";
+  static const String emptyPassword = "Parola boş olamaz";
+  static const String confirmPassword = "Parolayı Doğrula";
   static const String name = "İsim";
+  static const String emptyName = "İsim boş olamaz";
   static const String surname = "Soyisim";
-  static const String username = "Kullanıcı adı";
-  static const String repassword = "Parola doğrula";
-  static const String next_page = "İleri";
-  static const String register_step = "Yaklaştık";
-  static const String register_last_step = "Son aşama";
+  static const String emptySurname = "Soyisim boş olamaz";
+  static const String username = "Kullanıcı Adı";
+  static const String emptyUsername = "Kullanıcı adı boş olamaz";
+  static const String bio_is_not_empty = "Bio boş olamaz";
+  static const String or = "Ya da";
+  static const String failedToRetrieveUserInfo = "Kullanıcı bilgileri alınamadı.";
+  static const String coverPhotoNotFound = "Kapak fotoğrafı yok.";
+  static const String system_error = "Sistem kaynaklı bir hata oluştu, hata mesajı -> ";
+  static const String noUploadProfilePhoto = "Profil fotoğrafı boş olduğu için işlem tamamlanamadı";
+  static const String noUploadCoverPhoto = "Kapak fotoğrafı boş olduğu için işlem tamamlanamadı";
+  static const String noPostSelectPhoto = "Gönderi fotoğrafı seçilmedi";
+  static const String noCaption = "Açıklama eklemelisin!";
+
+  // Navigation & Actionsc
+  static const String nextPage = "İleri";
   static const String search = "Ara";
-  static const String chats = "Sohbetler";
-  static const String flow = "Akış";
+  static const String cancel = "İptal";
+  static const String save = "Kaydet";
+  static const String apply = "Uygula";
+  static const String share = "Paylaş";
+  static const String delete = "Sil";
+  static const String select = "Seç";
+  static const String logout = "Çıkış Yap";
+  static const String change = "Değiştir";
+  static const String go = "git";
+  static const String close = "close";
+  static const String loading = "Yükleniyor";
+
+  // Profile & Settings
   static const String profile = "Ben";
+  static const String personalSettings = "Kişisel Ayarlar";
+  static const String appSettings = "Ayarlar";
+  static const String appColorSettings = "Renk Ayarları";
+  static const String notificationSettings = "Bildirim Ayarları";
+  static const String applySettings = "Ayarlar uygulandı";
+  static const String changeProfilePhoto = "Profili Değiştir";
+  static const String changeCoverPhoto = "Kapağı Değiştir";
+  static const String sharePostSuccesful = "Gönderi paylaşıldı.";
+  static const String changePassword = "Şifre Değiştir";
+  static const String oldPassword = "Eski Şifre";
+  static const String newPassword = "Yeni Şifre";
+  static const String confirmNewPassword = "Yeni Şifreyi Doğrula";
+  static const String updateSuccess = "Güncelleme başarılı.";
+  static const String passwordUpdateSuccess = "Şifre başarıyla güncellendi.";
+  static const String did_you_forget_your_password = "Şifreni mi unuttun?";
+  static const String deleteProfilePhoto = "Profil fotoğrafı başarıyla silindi.";
+  static const String deleteCoverPhoto = "Kapak fotoğrafı başarıyla silindi.";
+  static const String noProfilePhoto = "Henüz profil fotoğrafı yüklenmedi.";
+  static const String noCoverPhoto = "Henüz kapak fotoğrafı yüklenmedi.";
+  static const String bio = "Biyografi";
+  static const String enterBio = "Biyografi girin.";
+  static const String errorFetchingUser = "Kullanıcı bilgileri alınamadı.";
+
+  // Follow & Requests
+  static const String follow = "Takip Et";
+  static const String unfollow = "Takipten Çık";
+  static const String sendFollowRequest = "Takip Et";
+  static const String followRequestSent = "İstek gönderildi.";
+  static const String requestAlreadySent = "İstek zaten gönderildi.";
+  static const String followers = "Takipçi";
+  static const String myFriends = "Takipçiler";
+  static const String noMyFriends = "Takipçi bulunmuyor";
+  static const String accept = "Kabul et";
+  static const String noRequests = "Hiçbir istek yok.";
+
+  // UI Elements
+  static const String chats = "Sohbetler";
+  static const String feed = "Akış";
   static const String add = "Ekle";
   static const String requests = "İstekler";
-  static const String settings = "Ayarlar";
-  static const String exit = "Çıkış yap";
-  static const String personal_settings = "Kişisel ayarlar";
-  static const String app_settings = "Uygulama ayarları";
-  static const String notification_settings = "Bildirim ayarları";
-  static const String selected_color = "Aktif renk";
-  static const String unselected_color = "Pasif renk";
-  static const choose_color = "Bir renk seç";
-  static const String select = "Seç";
-  static const String save = "Kaydet";
-  static const String apply_settings = "Seçimler uygulandı";
-  static const String apply = "Uygula";
-  static const String app_alt_bar_color_settings = "Altbar rengi";
-  static const String app_app_bar_color_settings = "Üstbar rengi";
-  static const String follow = "Takip et";
-  static const String delete = "Sil";
-  static const String change_profile_photo = "Profil fotoğrafı";
-  static const String change_cover_photo = "Kapak fotoğrafı";
-  static const String change = "Değiştir";
-  static const String change_password = "Şifre değiştir";
+  static const String floatingActionButtonTitle = "Buton Rengi";
+  static const String floatingActionButtonBackgroundColorTitle = "Arkaplan Rengi";
+  static const String floatingActionButtonForegroundColorTitle = "İçerik Rengi";
+  static const String activeColor = "Aktif Renk";
+  static const String inactiveColor = "Pasif Renk";
+  static const String chooseColor = "Bir renk seç";
+  static const String bottomBarColorSettings = "Alt Bar Rengi";
+  static const String appBarColorSettings = "Üst Bar Rengi";
+  static const String add_post = "Gönderi paylaş";
+  static const String description_hint = "Açıklama";
+  static const String description_hint_error = "Lütfen bir fotoğraf seçin ve açıklama yazın.";
+  static const String choose_photo = "Fotoğraf Seç";
+  static const String enter_comment = "Yorum yap";
+  static const String allComments = "Yorumlar";
+  static const String deleteComment = "Yorumu sil";
+  static const String showAllComments = "Tüm yorumları gör";
+  static const String postLikedUsers = "Beğenenler";
+  static const String empty_chat = "Henüz kimseyle sohbet etmedin";
+  static const String last_chat = "Son konuşma";
+  static const String enter_message = "Bir mesaj gir...";
 
-  //Paths
-static const String logo = "assets/images/logo.png";
 
-//Firebase
-static const String users = "Users";
+  // Registration Steps
+  static const String registrationStep = "Yaklaştık";
+  static const String finalRegistrationStep = "Son Aşama";
+
+  // Firebase
+  static const String users = "Users";
+  static const String posts = "Posts";
+  static const String messages = "Messages";
+  static const String chatsfb = "Chats";
+  static const String profilePhotoInFirebase = "ProfilePhoto";
+  static const String coverPhotoInFirebase = "CoverPhoto";
+
+  // Paths & Assets
+  static const String logo = "assets/images/logo.png";
+  static const Icon profilePhotoIcon = Icon(Icons.person);
+
+  //OneSignel
+  static const String appId = "46c4a5fe-2838-4ed3-b484-dfac8ea3da71";
+  static const String apiKey = "OWVkNjZlMjYtNzRjYS00MzA3LTgzYzQtZWNkYTBkNTRlNzAz";
 
 }
+

@@ -4,6 +4,7 @@ import 'package:heychat/constants/AppColors.dart';
 import 'package:heychat/constants/AppSizes.dart';
 import 'package:heychat/constants/AppStrings.dart';
 import 'package:heychat/services/shared_pref_service.dart';
+import 'package:heychat/view_model/home_page_viewmodel.dart';
 
 class CustomAppBarWidget extends ConsumerStatefulWidget
     implements PreferredSizeWidget {
@@ -13,6 +14,7 @@ class CustomAppBarWidget extends ConsumerStatefulWidget
   final bool isBack;
   final bool actions;
   final VoidCallback? onPressed;
+
 
   CustomAppBarWidget({
     super.key,
@@ -31,6 +33,7 @@ class CustomAppBarWidget extends ConsumerStatefulWidget
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
 
+final view_model = ChangeNotifierProvider((ref)=> HomePageViewmodel());
 class _CustomAppBarWidgetState extends ConsumerState<CustomAppBarWidget> {
   late Future<Color?> _colorFuture;
 
@@ -84,7 +87,11 @@ class _CustomAppBarWidgetState extends ConsumerState<CustomAppBarWidget> {
               onSelected: (String result) {
                 switch (result) {
                   case "post":
-                  // Handle post action
+                    Navigator.pushReplacementNamed(context, "/post_page");
+                    break;
+                  case "requests":
+                    Navigator.pushReplacementNamed(context, "/request_page");
+
                     break;
                   case "settings":
                     Navigator.pushReplacementNamed(context, "/settings_page");
@@ -104,13 +111,24 @@ class _CustomAppBarWidgetState extends ConsumerState<CustomAppBarWidget> {
                   ),
                 ),
                 const PopupMenuItem<String>(
+                  value: 'requests',
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Icon(Icons.notification_important),
+                      const SizedBox(width: 5,),
+                      Text(AppStrings.requests),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem<String>(
                   value: 'settings',
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Icon(Icons.settings),
                       const SizedBox(width: 5,),
-                      Text(AppStrings.settings),
+                      Text(AppStrings.appSettings),
                     ],
                   ),
                 ),
