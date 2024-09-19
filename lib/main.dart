@@ -7,6 +7,8 @@ import 'package:heychat/services/firebase_auth_service.dart';
 import 'package:heychat/view/auth/create_page.dart';
 import 'package:heychat/view/auth/login_page.dart';
 import 'package:heychat/view/chats/chats_page.dart';
+import 'package:heychat/view/chats/send_message_page.dart';
+import 'package:heychat/view/feed/feed_page.dart';
 import 'package:heychat/view/nav/home_page.dart';
 import 'package:heychat/view/post/post_page.dart';
 import 'package:heychat/view/profile/look_profile.dart';
@@ -17,7 +19,9 @@ import 'package:heychat/view/search_human/search_page.dart';
 import 'package:heychat/view/settings/settings_app_color_page.dart';
 import 'package:heychat/view/settings/settings_page.dart';
 import 'package:heychat/view/settings/settings_personel_page.dart';
+import 'package:heychat/view/show_comments/AllCommentsPage.dart';
 import 'package:heychat/view/splash/splas_page.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'constants/AppThemes.dart';
 import 'firebase_options.dart';
 
@@ -34,12 +38,12 @@ class Main extends StatefulWidget {
 }
 
 class _MainState extends State<Main> with WidgetsBindingObserver {
-
   late AppLifecycleObserver _appLifecycleObserver;
   late AppLifecycleState appLifecycleState;
 
-  final FirebaseAuthService _firebaseAuthService =FirebaseAuthService();
+  final FirebaseAuthService _firebaseAuthService = FirebaseAuthService();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
 
   @override
   void initState() {
@@ -50,16 +54,13 @@ class _MainState extends State<Main> with WidgetsBindingObserver {
     );
     WidgetsBinding.instance.addObserver(_appLifecycleObserver);
     // Uygulama başladığında kullanıcıyı çevrimiçi yapma
-
   }
-
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(_appLifecycleObserver);
     super.dispose();
   }
-
 
   void _onAppBackground() {
     User? currentUser = _auth.currentUser;
@@ -77,7 +78,6 @@ class _MainState extends State<Main> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.system,
@@ -85,29 +85,33 @@ class _MainState extends State<Main> with WidgetsBindingObserver {
       theme: AppThemes.lightTheme,
       home: FutureBuilder(
         future: checkInitialLoginStatus(context),
-        builder: (context, snapshot){
+        builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             return snapshot.data as Widget;
           }
-          return const Center(child: CircularProgressIndicator(),);
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         },
       ),
-
       routes: {
         "/home_page": (context) => HomePage(),
         "/splash_page": (context) => const SplashPage(),
         "/create_page": (context) => const CreatePage(),
         "/login_page": (context) => const LoginPage(),
         "/reset_password_page": (context) => const ResetPasswordPage(),
-        "/chats_page": (context) =>  const ChatsPage(),
-        "/search_page": (context) =>    SearchPage(),
+        "/chats_page": (context) => const ChatsPage(),
+        "/search_page": (context) => SearchPage(),
         "/profile_page": (context) => const ProfilePage(),
         "/settings_page": (context) => const SettingsPage(),
-        "/settings_feed_page": (context) =>   SettingsAppColorPage(),
-        "/settings_personel_page": (context) =>   const SettingsPersonelPage(),
-        "/look_page": (context) =>    LookProfile(),
-        "/request_page": (context) =>    RequestsPage(),
-        "/post_page": (context) =>    PostPage(),
+        "/settings_feed_page": (context) => SettingsAppColorPage(),
+        "/settings_personel_page": (context) => const SettingsPersonelPage(),
+        "/look_page": (context) => LookProfile(),
+        "/request_page": (context) => RequestsPage(),
+        "/post_page": (context) => PostPage(),
+        "/all_comments_page": (context) => AllCommentsPage(),
+        "/feed_page": (context) => FeedPage(),
+        "/send_message_page": (context) => SendMessagePage(),
       },
     );
   }

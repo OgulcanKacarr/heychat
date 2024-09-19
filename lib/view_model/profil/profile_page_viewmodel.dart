@@ -2,13 +2,20 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:heychat/model/Posts.dart';
 import 'package:heychat/model/Users.dart';
 import 'package:heychat/services/firebase_auth_service.dart';
+import 'package:heychat/services/firebase_firestore_service.dart';
 import 'package:photo_view/photo_view.dart';
 
 class ProfilePageViewmodel extends ChangeNotifier{
 
   final FirebaseAuthService _firebaseAuthService = FirebaseAuthService();
+  final FirebaseFirestoreService _firebaseFirestoreService = FirebaseFirestoreService();
+  List<Posts> _myPost = [];
+  get getMyPost => _myPost;
+
+
 
   Future<Users?> getUserInfo(BuildContext context, String user_id) async {
     Users? user_info = await _firebaseAuthService.getUsersFromFirebase(context,user_id);
@@ -43,4 +50,19 @@ class ProfilePageViewmodel extends ChangeNotifier{
       ),
     );
   }
-}
+
+
+  //kendi paylaştığımız post bilgilerini çekme
+  Future<List<Posts>> getMyPosts() async {
+    _myPost = await _firebaseFirestoreService.getMyPosts();
+    notifyListeners();
+
+    return _myPost;
+  }
+  Future<void> deletePost(String postId,String imageUrl) async {
+     await _firebaseFirestoreService.deletePost(postId, imageUrl);
+     notifyListeners();
+  }
+
+
+  }

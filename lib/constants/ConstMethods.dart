@@ -1,6 +1,4 @@
 import 'dart:io';
-import 'dart:math';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,12 +7,12 @@ import 'package:heychat/constants/AppSizes.dart';
 import 'package:heychat/constants/AppStrings.dart';
 import 'package:heychat/constants/ShowSnackBar.dart';
 import 'package:heychat/model/Users.dart';
+import 'package:heychat/services/SendNotificationService.dart';
 import 'package:heychat/services/firebase_auth_service.dart';
 import 'package:heychat/services/firebase_firestore_service.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:photo_view/photo_view.dart';
 import 'package:image/image.dart' as img;
 
 class ConstMethods extends ChangeNotifier {
@@ -23,19 +21,21 @@ class ConstMethods extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final ImagePicker _picker = ImagePicker();
 
+
   // Kullanıcı bilgilerini çekme metodu
   Future<Users?> getUserInfo(BuildContext context, String user_id) async {
-    Users? user_info = await _firebaseAuthService.getUsersFromFirebase(context, user_id);
+    Users? user_info =
+        await _firebaseAuthService.getUsersFromFirebase(context, user_id);
     notifyListeners();
     return user_info;
   }
 
   // Fotoğrafları getirme metodu
   Widget showCachedImage(
-      String imageUrl, {
-        double? width,
-        double? height,
-      }) {
+    String imageUrl, {
+    double? width,
+    double? height,
+  }) {
     if (imageUrl.isEmpty) {
       // Display a local asset image when the URL is empty
       return Image.asset(
@@ -51,15 +51,16 @@ class ConstMethods extends ChangeNotifier {
         width: width,
         height: height,
         fit: BoxFit.cover,
-        placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-        errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
+        placeholder: (context, url) =>
+            const Center(child: CircularProgressIndicator()),
+        errorWidget: (context, url, error) =>
+            const Center(child: Icon(Icons.error)),
       );
     }
   }
 
   // Fotoğraf seçme ve yükleme metodu
-  Future<File?> selectImage(
-      BuildContext context) async {
+  Future<File?> selectImage(BuildContext context) async {
     try {
       // Galeriden fotoğraf seç
       var pickedFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -92,7 +93,8 @@ class ConstMethods extends ChangeNotifier {
   }
 
   // Fotoğrafı yeniden boyutlandır
-  Future<File?> _resizeImage(BuildContext context, CroppedFile croppedImage) async {
+  Future<File?> _resizeImage(
+      BuildContext context, CroppedFile croppedImage) async {
     try {
       var imageFile = File(croppedImage.path);
       var decodedImage = img.decodeImage(await imageFile.readAsBytes());
@@ -123,14 +125,16 @@ class ConstMethods extends ChangeNotifier {
 
   // Profil fotoğrafı sil
   Future<void> removeProfilePhoto(BuildContext context) async {
-    String status = await _firestoreService.deleteProfilePhotoInFirebaseDatabase(context);
+    String status =
+        await _firestoreService.deleteProfilePhotoInFirebaseDatabase(context);
     ShowSnackBar.show(context, status);
     notifyListeners();
   }
 
   // Kapak fotoğrafı sil
   Future<void> removeCoverPhoto(BuildContext context) async {
-    String status = await _firestoreService.deleteCoverPhotoInFirebaseDatabase(context);
+    String status =
+        await _firestoreService.deleteCoverPhotoInFirebaseDatabase(context);
     ShowSnackBar.show(context, status);
     notifyListeners();
   }
@@ -139,4 +143,222 @@ class ConstMethods extends ChangeNotifier {
     final DateFormat formatter = DateFormat('HH:mm');
     return formatter.format(date);
   }
+
+
+  Future<void> showFollowersModal(
+      BuildContext context, String targetUserId) async {
+    List<Users> followers = await _firestoreService.getFollowers(context, targetUserId);
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Column(mainAxisSize: MainAxisSize.min, children: [
+          const Padding(
+            padding: EdgeInsets.all(10.0),
+            child: Text(
+              AppStrings.myFriends,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ),
+          followers.isEmpty
+              ? const Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: Text(AppStrings.noMyFriends),
+                )
+              : ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: followers.length,
+                  itemBuilder: (context, index) {
+                    Users users = followers[index];
+                    return ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: users.profileImageUrl.isNotEmpty
+                            ? NetworkImage(users.profileImageUrl)
+                            : null,
+                        child: users.profileImageUrl.isEmpty
+                            ? const Icon(Icons.person)
+                            : null,
+                      ),
+                      title: Text(users.displayName),
+                      subtitle: Text(users.username),
+                      onTap: (){
+                        Navigator.pushReplacementNamed(context, "/look_page",arguments: users.uid!);
+                      },
+                    );
+                  },
+                )
+        ]);
+      },
+    );
+  }
+
+  //postu beğenen kullanıcıları göster
+  Future<void> showLikedUsersBottomSheet(BuildContext context, String targetUserId) async {
+    List<Users> users = await _firestoreService.getFollowers(context, targetUserId);
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+      ),
+      builder: (BuildContext context) {
+        return SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // Modalın içeriğe göre boyutlanmasını sağlar
+              children: [
+                const Text(
+                  AppStrings.postLikedUsers,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                // Beğenen kullanıcıları liste halinde göstermek için ListView.builder kullanılır
+                SizedBox(
+                  height: 300, // Liste için sabit bir yükseklik tanımladım, isteğe göre değiştirilebilir.
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: users.length,
+                    itemBuilder: (context, index) {
+                      Users user = users[index];
+                      return Row(
+                        children: [
+                          SizedBox(
+                            width: 50,
+                            child: CircleAvatar(child: showCachedImage(user.profileImageUrl),),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushReplacementNamed(context, "/look_page",
+                                  arguments: user.uid);
+                            },
+                            child: Text(user.username),
+                          ),
+                          // Takip et butonu sadece kullanıcı kendisi değilse gösterilecek
+                          if (user.uid != _auth.currentUser!.uid) ...[
+                            const Spacer(),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pushReplacementNamed(context, "/look_page",arguments: user.uid!);
+                              },
+                              child: const Text(AppStrings.go),
+                            ),
+                          ],
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text(AppStrings.ok),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  //chat için takipçi listesini getir
+  Future<void> showFollowersDialog(
+      BuildContext context, String targetUserId) async {
+    List<Users> allFollowers = await _firestoreService.getFollowers(context, targetUserId);
+
+    List<Users> filteredFollowers = List.from(allFollowers);
+    String searchQuery = '';
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text(AppStrings.myFriends),
+              content: SizedBox(
+                width: double.maxFinite, // Dialog genişliği
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Arama TextField
+                    TextField(
+                      onChanged: (query) {
+                        setState(() {
+                          searchQuery = query;
+                          filteredFollowers = allFollowers.where((user) {
+                            final nameMatch = user.displayName.toLowerCase().contains(searchQuery.toLowerCase());
+                            final usernameMatch = user.username.toLowerCase().contains(searchQuery.toLowerCase());
+                            return nameMatch || usernameMatch;
+                          }).toList();
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        labelText: AppStrings.search,
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    // Kullanıcıları listeleme
+                    Flexible(
+                      child: filteredFollowers.isEmpty
+                          ? const Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: Text(AppStrings.noMyFriends),
+                      )
+                          : ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: filteredFollowers.length,
+                        itemBuilder: (context, index) {
+                          Users user = filteredFollowers[index];
+                          return ListTile(
+                            leading: CircleAvatar(
+                              backgroundImage: user.profileImageUrl.isNotEmpty
+                                  ? NetworkImage(user.profileImageUrl)
+                                  : null,
+                              child: user.profileImageUrl.isEmpty
+                                  ? const Icon(Icons.person)
+                                  : null,
+                            ),
+                            title: Text(user.displayName),
+                            subtitle: Text(user.username),
+                            onTap: () {
+                              Navigator.pushReplacementNamed(context, "/send_message_page", arguments: user.uid!);
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text(AppStrings.close),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  //bildirim gönder
+  static void sendNotification(String targetId, String message, String title, String targetPage, String receiverId) {
+    sendNotificationService(
+      target: targetId, // Alıcı kullanıcının ID'si
+      message: message,
+      title: title,
+      targetPage:targetPage,
+      receiverId: receiverId);
+  }
+
+
+
+
 }

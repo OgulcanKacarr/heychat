@@ -91,6 +91,9 @@ class FirebaseStorageService{
     return await snapshot.ref.getDownloadURL();
   }
 
-
+  Future<void> deletePostInStorage(String imageUrl) async {
+    Reference imageRef = _firebaseStorage.refFromURL(imageUrl);
+    await imageRef.delete();
+  }
 
 }

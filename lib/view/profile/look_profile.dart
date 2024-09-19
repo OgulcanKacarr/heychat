@@ -6,10 +6,13 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heychat/constants/AppSizes.dart';
 import 'package:heychat/constants/AppStrings.dart';
+import 'package:heychat/constants/ConstMethods.dart';
 import 'package:heychat/constants/ShowSnackBar.dart';
+import 'package:heychat/model/Posts.dart';
 import 'package:heychat/model/Users.dart';
 import 'package:heychat/services/firebase_firestore_service.dart';
 import 'package:heychat/view_model/profil/look_page_viewmodel.dart';
+import 'package:heychat/widgets/LikeButton.dart';
 import 'package:heychat/widgets/custom_indicator_widget.dart';
 
 final viewModelProvider = ChangeNotifierProvider((ref) => LookPageViewmodel());
@@ -36,11 +39,14 @@ class _LookProfileState extends ConsumerState<LookProfile> {
     _currentUserId = FirebaseAuth.instance.currentUser?.uid;
     _futureUser = _getUserInfo();
 
+
     if (_userId != null && _currentUserId != null) {
       // Takip durumunu kontrol et
+      ref.read(viewModelProvider).getTargetPosts(_userId!);
       ref.read(viewModelProvider).checkFollowReceive(_currentUserId!, _userId!);
       ref.read(viewModelProvider).checkFollowSend(_currentUserId!, _userId!);
       ref.read(viewModelProvider).checkFriends(_currentUserId!, _userId!);
+      ref.read(viewModelProvider).getFollowers(context, _userId!);
     }
 
   }
@@ -85,6 +91,7 @@ class _LookProfileState extends ConsumerState<LookProfile> {
     );
   }
   Widget _buildBody(LookPageViewmodel read, LookPageViewmodel watch, Users user) {
+    final ConstMethods _constMethods = ConstMethods();
     return SingleChildScrollView(
       child: Stack(
         clipBehavior: Clip.none,
@@ -154,10 +161,21 @@ class _LookProfileState extends ConsumerState<LookProfile> {
                     const SizedBox(height: 5),
                     //takipçi
                     Center(
-                      child: Text(
-                        "${user.followers != null ? user.followers!.length : 0} ${AppStrings.followers}",
-                        style: const TextStyle(fontSize: AppSizes.paddingMedium),
+                      child: TextButton(
+                        child: Text(
+                          "${user.followers != null ? user.followers!.length : 0} ${AppStrings.followers}",
+                          style: const TextStyle(fontSize: AppSizes.paddingMedium),
+                        ),
+                        onPressed: () async {
+                          // Takipçileri çek ve modalı göster
+                          List<Users> followers = (await watch.getFollowers(context, _userId!)) as List<Users>;
+                          if (followers.isNotEmpty) {
+                            _constMethods.showFollowersModal(context, user.uid!);
+                          } else {
+                          }
+                        },
                       ),
+
                     ),
                     const SizedBox(height: 10),
                     const CustomIndicatorWidget(),
@@ -205,7 +223,7 @@ class _LookProfileState extends ConsumerState<LookProfile> {
                       ),
                     ),
 
-                    _buildPost(),
+                    _buildPost(watch,read,_constMethods),
                   ],
                 ),
               ),
@@ -234,7 +252,7 @@ class _LookProfileState extends ConsumerState<LookProfile> {
     );
   }
 
-  Widget _buildPost() {
+  Widget _buildPost(LookPageViewmodel watch, LookPageViewmodel read, ConstMethods _constMethods) {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -243,45 +261,58 @@ class _LookProfileState extends ConsumerState<LookProfile> {
         crossAxisSpacing: 5.0,
         mainAxisSpacing: 5.0,
       ),
-      itemCount: 10,
+      itemCount: watch.getPost.length,
       itemBuilder: (context, index) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.teal,
-            borderRadius: BorderRadius.circular(10),
+        Posts post = watch.getPost[index];
+        return Card(
+          elevation: 5, // Gölge efekti
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
           ),
+          clipBehavior: Clip.antiAlias,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: Center(
-                  child: Text(
-                    'Eleman $index',
-                    style: const TextStyle(color: Colors.white, fontSize: 16),
-                  ),
+                child: Stack(
+                  children: [
+                    _constMethods.showCachedImage(
+                      post.imageUrl,
+                      width: double.infinity,
+                    ),
+
+                  ],
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      // Beğeni butonuna tıklandığında yapılacaklar
-                    },
-                    icon: const Icon(Icons.heart_broken, color: Colors.white),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      // Silme butonuna tıklandığında yapılacaklar
-                    },
-                    icon: const Icon(Icons.delete, color: Colors.white),
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Beğenme butonu
+                    GestureDetector(
+                      onTap: () {
+                        // Beğeni butonuna tıklandığında yapılacaklar
+                      },
+                      child: Row(
+                        children: [
+                           LikeButton(post: post, currentUserId: _userId!),
+                        ],
+                      ),
+                    ),
+
+
+                  ],
+                ),
               ),
             ],
           ),
         );
       },
+      padding: const EdgeInsets.all(5.0),
     );
   }
+
+
+
 }

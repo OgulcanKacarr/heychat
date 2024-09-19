@@ -1,4 +1,7 @@
 import 'package:flutter/cupertino.dart';
+import 'package:heychat/model/Comments.dart';
+import 'package:heychat/model/Posts.dart';
+import 'package:heychat/model/Users.dart';
 import 'package:heychat/services/firebase_firestore_service.dart';
 
 class LookPageViewmodel extends ChangeNotifier {
@@ -15,6 +18,21 @@ class LookPageViewmodel extends ChangeNotifier {
   bool get isRequestReceived => _isRequestReceived;
 
   bool get isUnFollow => _isUnFollow;
+
+
+  //postları getir
+  List<Posts> _getPost = [];
+  get getPost => _getPost;
+
+  //takipçileri getir
+  late List<Users> _followers;
+  get followers => _followers;
+
+  //uorumları al
+  List<Comments> comments = [];
+  //postu beğenenleri al
+  late List<Users> liked_post_users;
+
 
   Future<void> sendFollow(String currentUserId, String targetUserId) async {
     try {
@@ -101,5 +119,30 @@ class LookPageViewmodel extends ChangeNotifier {
       print(e); // Consider showing an error message
     }
   }
+
+
+  //postları getir
+  Future<List<Posts>> getTargetPosts(String targetUserId) async {
+    _getPost = await _firestoreService.getTargetPosts(targetUserId);
+    notifyListeners();
+    return _getPost;
+  }
+
+  //takipçileri getir
+  Future<List<Users>> getFollowers(BuildContext context,String targetUserId) async {
+    _followers = await _firestoreService.getFollowers(context, targetUserId);
+    notifyListeners();
+    return _followers;
+  }
+
+
+  //postu beğenen kullanıcıları getir
+  Future<List<Users>> getLikedPostsUser(BuildContext context, String postId) async {
+    liked_post_users = await _firestoreService.getLikedPostsUser(context,postId);
+    notifyListeners();
+    return liked_post_users;
+  }
+
+
 
 }

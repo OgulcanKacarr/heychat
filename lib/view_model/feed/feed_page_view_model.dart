@@ -1,7 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:heychat/constants/AppStrings.dart';
+import 'package:heychat/constants/ConstMethods.dart';
 import 'package:heychat/model/Comments.dart';
 import 'package:heychat/model/PostWithUser.dart';
+import 'package:heychat/model/Users.dart';
 import 'package:heychat/services/firebase_firestore_service.dart';
 import 'package:heychat/services/firebase_storage_service.dart';
 
@@ -18,6 +22,8 @@ class FeedPageViewModel extends ChangeNotifier{
 
   //uorumları al
   List<Comments> comments = [];
+  //postu beğenenleri al
+  late List<Users> liked_post_users;
 
 
 
@@ -48,7 +54,7 @@ class FeedPageViewModel extends ChangeNotifier{
   //yorum yap
   Future<void> sendComment(String postId, String newComment) async {
     await _firebaseFirestoreService.sendComment(postId, newComment);
-    notifyListeners();
+    getComments(postId);
   }
 
   //yorumları getir
@@ -58,5 +64,35 @@ class FeedPageViewModel extends ChangeNotifier{
     return comments;
   }
 
-
+  //postu beğenen kullanıcıları getir
+  Future<List<Users>> getLikedPostsUser(BuildContext context, String postId) async {
+    liked_post_users = await _firebaseFirestoreService.getLikedPostsUser(context,postId);
+    notifyListeners();
+    return liked_post_users;
   }
+
+
+
+  Future<void> deleteCommentDialog(BuildContext context, String postId, String commentId) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: TextButton(
+            onPressed: () async {
+              await _firebaseFirestoreService.deleteComment(postId, commentId);
+              notifyListeners(); // Yorum silindikten sonra ekranı güncelle
+              Navigator.pop(context); // Dialogu kapat
+            },
+            child: const Text(AppStrings.deleteComment),
+          ),
+        );
+      },
+    );
+  }
+
+
+
+
+
+}

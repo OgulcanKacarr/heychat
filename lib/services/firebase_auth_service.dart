@@ -6,13 +6,14 @@ import 'package:heychat/constants/AppStrings.dart';
 import 'package:heychat/constants/FbErrorsMessages.dart';
 import 'package:heychat/constants/ShowSnackBar.dart';
 import 'package:heychat/model/Users.dart';
+import 'package:heychat/services/OneSignalService.dart';
 import 'package:heychat/services/firebase_firestore_service.dart';
 
 class FirebaseAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Fberrorsmessages _fberrorsmessages = Fberrorsmessages();
   final FirebaseFirestoreService _firestoreService = FirebaseFirestoreService();
-
+  final OnesignalService _oneSignaLService = OnesignalService();
 
   // Firebase ile yeni kullanıcı oluşturma metodu
   Future<void> createUserWithFirebase(BuildContext context, String email,
@@ -45,6 +46,7 @@ class FirebaseAuthService {
 
         // Kullanıcı bilgilerini veritabanına ekle
         _firestoreService.addUserInfoInDatabase(context, user);
+        await _oneSignaLService.setupOneSignal(_auth.currentUser!.uid);
       } else {
         ShowSnackBar.show(context, AppStrings.userCreationFailed);
       }
@@ -113,17 +115,12 @@ class FirebaseAuthService {
     });
   }
 
-
-
-
-
-
-
-
   //Kullanıcı daha önceden giriş yaptı mı?
   Future<bool> checkLoginStatus(BuildContext context) async {
     if (_auth.currentUser != null) {
       setUserOnline(context, _auth.currentUser!);
+      await _oneSignaLService.setupOneSignal(_auth.currentUser!.uid);
+       _oneSignaLService.handlerOneSignal(context);
       return true;
     } else {
       return false;
@@ -138,7 +135,6 @@ class FirebaseAuthService {
   //Kullanıcı isOnline değerini false yapma
   Future<void> setUserOffline(BuildContext context, User user) async {
     _firestoreService.updateUserOnline(context, user, false);
-
   }
 
   //Kullanıcı çıkış yapma

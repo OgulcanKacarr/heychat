@@ -16,6 +16,11 @@ class PostPage extends ConsumerStatefulWidget {
 class _FeedPageState extends ConsumerState<PostPage> {
   final TextEditingController _descriptionController = TextEditingController();
 
+  @override
+  void dispose() {
+    super.dispose();
+    _descriptionController.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +40,7 @@ class _FeedPageState extends ConsumerState<PostPage> {
           // Fotoğrafı paylaş
             watch.sharePost(context, _descriptionController.text);
         },
-        child: const Text(AppStrings.share),
+      child: const Text(AppStrings.share),
       ),
 
     );
@@ -78,7 +83,8 @@ class _FeedPageState extends ConsumerState<PostPage> {
       padding: const EdgeInsets.all(16.0),
       child: TextField(
         controller: _descriptionController,
-        maxLines: 4,
+        maxLines: 2,
+        textInputAction: TextInputAction.done,
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
           hintText: AppStrings.description_hint,

@@ -63,7 +63,7 @@ class _CustomNavigationbarWidgetState extends ConsumerState<CustomNavigationbarW
             },
           );
         } else {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         }
       },
     );

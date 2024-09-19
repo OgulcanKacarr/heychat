@@ -47,7 +47,11 @@ class _RequestsPageState extends ConsumerState<RequestsPage> {
                   final request = watch.requests[index];
                   final user = request['user'] as Users;
                   return ListTile(
-                    leading: _constMethods.showCachedImage(user.profileImageUrl),
+                    leading: SizedBox(
+                      width: 50,  // Örnek genişlik
+                      height: 50, // Örnek yükseklik
+                      child: _constMethods.showCachedImage(user.profileImageUrl),
+                    ),
                     title: Text(user.displayName),
                     subtitle: Text(user.username),
                     onTap: () {

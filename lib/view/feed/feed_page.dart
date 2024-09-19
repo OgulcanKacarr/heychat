@@ -2,10 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:heychat/constants/AppSizes.dart';
 import 'package:heychat/constants/AppStrings.dart';
 import 'package:heychat/constants/ConstMethods.dart';
 import 'package:heychat/model/PostWithUser.dart';
+import 'package:heychat/model/Users.dart';
 import 'package:heychat/view_model/feed/feed_page_view_model.dart';
 import 'package:heychat/widgets/CommentButton.dart';
 import 'package:heychat/widgets/LikeButton.dart';
@@ -64,7 +64,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
 
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 3,vertical: 3),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -73,11 +73,12 @@ class _FeedPageState extends ConsumerState<FeedPage> {
             const Divider(),
             // Post görseli
             postImage(user, _constMethods),
-            const SizedBox(height: 10),
             // Butonlar
             postButtons(user, _constMethods, currentUserId),
+
             // Kullanıcı adı ve post açıklaması
             usernameAndDescription(user, _constMethods),
+
             // Yorum yapma butonu aç veya kapat
             Visibility(
               visible: !watch.open_comment_status,
@@ -97,7 +98,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
           radius: 25,
           child: _constMethods.showCachedImage(user.user.profileImageUrl),
         ),
-        const SizedBox(width: 1),
+        const SizedBox(width: 2),
         TextButton(
           child: Text(user.user.displayName),
           onPressed: () {
@@ -123,15 +124,21 @@ class _FeedPageState extends ConsumerState<FeedPage> {
   Widget postButtons(PostWithUser user, ConstMethods _constMethods, String currentUserId) {
     return Row(
       children: [
+        //beğenme butonu
         LikeButton(post: user.post, currentUserId: currentUserId),
+        //yorumları açma butonu
         IconButton(
           onPressed: () {
             ref.read(viewModelProvider.notifier).enterComment();
           },
           icon: const Icon(Icons.comment),
         ),
-        IconButton(onPressed: () {}, icon: const Icon(Icons.share)),
+        //paylaş butonu
+        IconButton(onPressed: () {
+          Navigator.pushReplacementNamed(context, "/home_page");
+        }, icon: const Icon(Icons.share)),
         const Spacer(),
+        //tarihi gösterme
         Text(_constMethods.formatDate(user.post.createdAt.toDate())),
       ],
     );
@@ -139,7 +146,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
 
   Widget usernameAndDescription(PostWithUser user, ConstMethods _constMethods) {
     return Padding(
-      padding: const EdgeInsets.only(left: 5.0),
+      padding: const EdgeInsets.only(left: 8),
       child: Row(
         children: [
           Text("${user.user.username}: ${user.post.caption}"),

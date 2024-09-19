@@ -16,6 +16,8 @@ class AppStrings {
   static const String userNotFound = "Kullanıcı bulunamadı.";
   static const String usernameAlreadyTaken = "Bu kullanıcı adı zaten alınmış.";
   static const String passwordsDoNotMatch = "Parolalar eşleşmiyor";
+  static const String ok = "tamam";
+
 
   // User Input Prompts & Errors
   static const String enterEmail = "Email";
@@ -50,6 +52,9 @@ class AppStrings {
   static const String select = "Seç";
   static const String logout = "Çıkış Yap";
   static const String change = "Değiştir";
+  static const String go = "git";
+  static const String close = "close";
+  static const String loading = "Yükleniyor";
 
   // Profile & Settings
   static const String profile = "Ben";
@@ -83,6 +88,8 @@ class AppStrings {
   static const String followRequestSent = "İstek gönderildi.";
   static const String requestAlreadySent = "İstek zaten gönderildi.";
   static const String followers = "Takipçi";
+  static const String myFriends = "Takipçiler";
+  static const String noMyFriends = "Takipçi bulunmuyor";
   static const String accept = "Kabul et";
   static const String noRequests = "Hiçbir istek yok.";
 
@@ -104,6 +111,14 @@ class AppStrings {
   static const String description_hint_error = "Lütfen bir fotoğraf seçin ve açıklama yazın.";
   static const String choose_photo = "Fotoğraf Seç";
   static const String enter_comment = "Yorum yap";
+  static const String allComments = "Yorumlar";
+  static const String deleteComment = "Yorumu sil";
+  static const String showAllComments = "Tüm yorumları gör";
+  static const String postLikedUsers = "Beğenenler";
+  static const String empty_chat = "Henüz kimseyle sohbet etmedin";
+  static const String last_chat = "Son konuşma";
+  static const String enter_message = "Bir mesaj gir...";
+
 
   // Registration Steps
   static const String registrationStep = "Yaklaştık";
@@ -112,12 +127,18 @@ class AppStrings {
   // Firebase
   static const String users = "Users";
   static const String posts = "Posts";
+  static const String messages = "Messages";
+  static const String chatsfb = "Chats";
   static const String profilePhotoInFirebase = "ProfilePhoto";
   static const String coverPhotoInFirebase = "CoverPhoto";
 
   // Paths & Assets
   static const String logo = "assets/images/logo.png";
   static const Icon profilePhotoIcon = Icon(Icons.person);
+
+  //OneSignel
+  static const String appId = "46c4a5fe-2838-4ed3-b484-dfac8ea3da71";
+  static const String apiKey = "OWVkNjZlMjYtNzRjYS00MzA3LTgzYzQtZWNkYTBkNTRlNzAz";
 
 }
 

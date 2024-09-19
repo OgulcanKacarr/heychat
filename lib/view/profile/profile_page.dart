@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heychat/constants/AppSizes.dart';
 import 'package:heychat/constants/AppStrings.dart';
 import 'package:heychat/constants/ConstMethods.dart';
+import 'package:heychat/model/Posts.dart';
 import 'package:heychat/model/Users.dart';
 import 'package:heychat/view_model/profil/profile_page_viewmodel.dart';
 import 'package:heychat/widgets/custom_indicator_widget.dart';
@@ -28,19 +29,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   bool _isDataLoaded = false;
 
 
-  //Kullanıcı bilgilerini gösterecek değişkenler
-  String _display_name = "";
-  String _profile_photo = "";
-  String _cover_photo = "";
-  bool _isOnline = false;
-  String _username = "";
-  //bio yok ise gösterme
-  bool _isShowBio = false;
-  String _bio = "";
-  List<String> _followers = [];
-
-
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -53,9 +41,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   //Kullanıcıları veritabanından çek
   Future<Users?> _getUserInfo() async {
     Users? user = await _constMethods.getUserInfo(context, _auth.currentUser!.uid);
+    ref.read(viewModelProvider).getMyPosts();
     return user;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -74,24 +62,15 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         } else {
           //kullanıcı bilgileri değişkenlere işle
           Users user = snapshot.data!;
-          _username = user.username;
-          _display_name = user.displayName;
-          _followers = user.followers!;
-          _profile_photo = user.profileImageUrl;
-          _cover_photo = user.coverImageUrl;
-          _isOnline = user.isOnline;
-          _bio = user.bio;
-          if(_bio.isNotEmpty){
-            _isShowBio = true;
-          }
 
-          return _buildBody(watch,read);
+
+          return _buildBody(watch,read, user);
         }
       },
     );
   }
 
-  Widget _buildBody(ProfilePageViewmodel watch, ProfilePageViewmodel read) {
+  Widget _buildBody(ProfilePageViewmodel watch, ProfilePageViewmodel read, Users user) {
     return SingleChildScrollView(
       child: Stack(
         clipBehavior: Clip.none,
@@ -103,10 +82,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               SizedBox(
                 width: AppSizes.screenWidth(context),
                 height: AppSizes.screenHeight(context) / 2.5,
-                child: _cover_photo.isEmpty
+                child: user.coverImageUrl.isEmpty
                     ? const Center(
                         child: Text(AppStrings.coverPhotoNotFound))
-                    : _constMethods.showCachedImage(_cover_photo),
+                    : _constMethods.showCachedImage(user.coverImageUrl),
               ),
 
               // Profil Bilgileri ve Postlar
@@ -125,12 +104,12 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
                         //Online Durumu
                          Padding(
-                          padding: EdgeInsets.only(left: 10),
+                          padding: const EdgeInsets.only(left: 10),
                           child: SizedBox(
                             width: 20,
                             child: CircleAvatar(
                               backgroundColor:
-                              _isOnline ? Colors.green : Colors.grey,
+                              user.isOnline ? Colors.green : Colors.grey,
                             ),
                           ),
                         ),
@@ -149,7 +128,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     // Ad - soyad
                      Center(
                       child: Text(
-                        _display_name.isNotEmpty ? _display_name :  AppStrings.userNotFound,
+                        user.displayName.isNotEmpty ? user.displayName :  AppStrings.userNotFound,
 
                         style: const TextStyle(fontSize: AppSizes.paddingLarge),
                       ),
@@ -157,17 +136,17 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     // kullanıcı adı
                      Center(
                       child: Text(
-                        _username.isNotEmpty ? _username :  AppStrings.userNotFound,
+                        user.username.isNotEmpty ? user.username :  AppStrings.userNotFound,
                         style: const TextStyle(fontSize: AppSizes.paddingMedium),
                       ),
                     ),
                     const SizedBox(height: 15),
 
                     // bio
-                    if (_isShowBio)
+                    if (user.bio.isNotEmpty)
                       Center(
                         child: Text(
-                          _bio,
+                          user.bio,
                           style: const TextStyle(fontSize: AppSizes.paddingMedium),
                         ),
                       ),
@@ -176,16 +155,21 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
                     // Takipçiler
                      Center(
-                      child: Text(
-                        "${_followers.length} ${AppStrings.followers}",
-                        style: const TextStyle(fontSize: AppSizes.paddingMedium),
+                      child: TextButton(
+                        child: Text(
+                          "${user.followers!.length} ${AppStrings.followers}",
+                          style: const TextStyle(fontSize: AppSizes.paddingMedium),
+                        ),
+                        onPressed: () async {
+                          await _constMethods.showFollowersModal(context, user.uid!);
+                        },
                       ),
                     ),
                     const SizedBox(height: 10),
                     const CustomIndicatorWidget(),
                     const SizedBox(height: 10),
                     // Posts
-                    _buildPost(),
+                    _buildPost(watch,read),
                   ],
                 ),
               ),
@@ -198,11 +182,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             child: CircleAvatar(
               radius: 50,
               backgroundColor: Colors.grey[200], // Opsiyonel: Arka plan rengi
-              child: _profile_photo.isEmpty
+              child: user.profileImageUrl.isEmpty
                   ? const Icon(Icons.person, size: 50) // Profil fotoğrafı yoksa ikon göster
                   : ClipOval(
                 child: _constMethods.showCachedImage(
-                  _profile_photo,
+                  user.profileImageUrl,
                   width: 100,
                   height: 100,
                 ),
@@ -215,7 +199,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   }
 
   //Post görünümleri
-  Widget _buildPost() {
+  Widget _buildPost(ProfilePageViewmodel watch, ProfilePageViewmodel read) {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -224,43 +208,58 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         crossAxisSpacing: 5.0,
         mainAxisSpacing: 5.0,
       ),
-      itemCount: 10,
+      itemCount: watch.getMyPost.length,
       itemBuilder: (context, index) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.teal,
-            borderRadius: BorderRadius.circular(10),
+        Posts post = watch.getMyPost[index];
+        return Card(
+          elevation: 5, // Gölge efekti
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
           ),
+          clipBehavior: Clip.antiAlias,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: Center(
-                  child: Text(
-                    'Eleman $index',
-                    style: const TextStyle(color: Colors.white, fontSize: 16),
-                  ),
+                child: Stack(
+                  children: [
+                    _constMethods.showCachedImage(
+                      post.imageUrl,
+                      width: double.infinity,
+
+                    ),
+
+                  ],
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  //beğenme butonu
-                  IconButton(
-                    onPressed: () {
-                      // Beğeni butonuna tıklandığında yapılacaklar
-                    },
-                    icon: const Icon(Icons.heart_broken, color: Colors.white),
-                  ),
-
-                  //silme butonu
-                  IconButton(
-                    onPressed: () {
-                      // Silme butonuna tıklandığında yapılacaklar
-                    },
-                    icon: const Icon(Icons.delete, color: Colors.white),
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Beğenme butonu
+                    GestureDetector(
+                      onTap: () {
+                        // Beğeni butonuna tıklandığında yapılacaklar
+                      },
+                      child: Row(
+                        children: [
+                          const Icon(Icons.favorite_border, color: Colors.red),
+                          const SizedBox(width: 5),
+                          Text(post.likes.length.toString()),
+                        ],
+                      ),
+                    ),
+                    // Silme butonu
+                    IconButton(
+                      onPressed: () async {
+                        // Silme butonuna tıklandığında yapılacaklar
+                        await watch.deletePost(post.postId, post.imageUrl);
+                      },
+                      icon: const Icon(Icons.delete, color: Colors.grey),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
